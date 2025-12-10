@@ -1,10 +1,19 @@
+import { auth } from "@/server/better-auth";
 import { GalleryVerticalEnd } from "lucide-react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
-export default function AuthLayout(props: AuthLayoutProps) {
+export default async function AuthLayout(props: AuthLayoutProps) {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (session) {
+    redirect("/dashboard");
+  }
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">
@@ -17,5 +26,5 @@ export default function AuthLayout(props: AuthLayoutProps) {
         {props.children}
       </div>
     </div>
-  )
+  );
 }

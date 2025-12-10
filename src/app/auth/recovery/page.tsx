@@ -1,25 +1,25 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
   FieldGroup,
   FieldLabel,
   FieldSeparator,
-} from "@/components/ui/field"
+} from "@/components/ui/field";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
 
 export default function RecoveryPage() {
   return (
-    <div className="flex flex-col gap-4" >
+    <div className="flex flex-col gap-4">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Forget password</CardTitle>
@@ -42,7 +42,8 @@ export default function RecoveryPage() {
               <Field>
                 <Button type="submit">Send recovery mail</Button>
                 <FieldDescription className="text-center">
-                  Can you remember your password? <Link href="/auth/sign-in">Sign in</Link>
+                  Can you remember your password?{" "}
+                  <Link href="/auth/sign-in">Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -54,6 +55,5 @@ export default function RecoveryPage() {
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-  )
+  );
 }
-

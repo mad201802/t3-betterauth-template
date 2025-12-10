@@ -1,22 +1,119 @@
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+"use client";
+
+import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
-} from "@/components/ui/field"
+} from "@/components/ui/field";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import Link from "next/link"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import Link from "next/link";
+import { useState } from "react";
+import { z } from "zod";
+import { authClient } from "@/server/better-auth/client";
+
+const signUpFormSchema = z
+  .object({
+    name: z.string().min(2).max(50),
+    email: z.string().email(),
+    password: z.string().min(8, "Password must be at least 8 characters long"),
+    confirmPassword: z.string().min(8),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export default function SignInPage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [emailSent, setEmailSent] = useState(false);
+  const [sentToEmail, setSentToEmail] = useState<string>("");
+
+  const form = useForm<z.infer<typeof signUpFormSchema>>({
+    resolver: zodResolver(signUpFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = async (data: z.infer<typeof signUpFormSchema>) => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      await authClient.signUp.email(
+        {
+          email: data.email,
+          password: data.password,
+          name: data.name,
+          callbackURL: "/dashboard",
+        },
+        {
+          onError: (ctx) => {
+            if (ctx.error.status === 403) {
+              setError("Please verify your email address");
+            } else {
+              setError(ctx.error.message ?? "Failed to create account");
+            }
+          },
+        },
+      );
+
+      // If successful, show confirmation message
+      setSentToEmail(data.email);
+      setEmailSent(true);
+    } catch (err) {
+      console.error("Sign up error:", err);
+      setError("An unexpected error occurred");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  if (emailSent) {
+    return (
+      <div className={cn("flex flex-col gap-6")}>
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-xl">Check your email</CardTitle>
+            <CardDescription>
+              We sent a verification email to {sentToEmail}
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <p className="text-muted-foreground text-center text-sm">
+                Please check your inbox and click the verification link to
+                complete your registration.
+              </p>
+              <div className="flex justify-center">
+                <Button asChild variant="outline">
+                  <Link href="/auth/sign-in">Go to Sign In</Link>
+                </Button>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
   return (
     <div className={cn("flex flex-col gap-6")}>
       <Card>
@@ -27,42 +124,110 @@ export default function SignInPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <form>
+          <form id="form-sign-up" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                <Input id="name" type="text" placeholder="John Doe" required />
-              </Field>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
+              <Controller
+                name="name"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="form-sign-up-name">
+                      Full Name
+                    </FieldLabel>
+                    <Input
+                      {...field}
+                      id="form-sign-up-name"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="John Doe"
+                      autoComplete="off"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Controller
+                name="email"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor="form-sign-up-email">Email</FieldLabel>
+                    <Input
+                      {...field}
+                      id="form-sign-up-email"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="m@example.com"
+                      type="email"
+                      required
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+              <Field className="grid grid-cols-2 gap-4">
+                <Controller
+                  name="password"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="form-sign-up-password">
+                        Password
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id="form-sign-up-password"
+                        aria-invalid={fieldState.invalid}
+                        type="password"
+                        required
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
+                />
+                <Controller
+                  name="confirmPassword"
+                  control={form.control}
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor="form-sign-up-confirm-password">
+                        Confirm Password
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id="form-sign-up-confirm-password"
+                        aria-invalid={fieldState.invalid}
+                        type="password"
+                        required
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  )}
                 />
               </Field>
               <Field>
-                <Field className="grid grid-cols-2 gap-4">
-                  <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input id="password" type="password" required />
-                  </Field>
-                  <Field>
-                    <FieldLabel htmlFor="confirm-password">
-                      Confirm Password
-                    </FieldLabel>
-                    <Input id="confirm-password" type="password" required />
-                  </Field>
-                </Field>
                 <FieldDescription>
                   Must be at least 8 characters long.
                 </FieldDescription>
               </Field>
+              {error && (
+                <Field>
+                  <FieldError errors={[{ message: error }]} />
+                </Field>
+              )}
               <Field>
-                <Button type="submit">Create Account</Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? "Creating Account..." : "Create Account"}
+                </Button>
                 <FieldDescription className="text-center">
-                  Already have an account? <Link href="/auth/sign-in">Sign in</Link>
+                  Already have an account?{" "}
+                  <Link href="/auth/sign-in">Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
@@ -74,7 +239,5 @@ export default function SignInPage() {
         and <a href="#">Privacy Policy</a>.
       </FieldDescription>
     </div>
-
-  )
+  );
 }
-
