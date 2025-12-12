@@ -50,7 +50,7 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg grayscale">
                 <AvatarImage
-                  src={session.data?.user.image}
+                  src={session.data?.user.image ?? undefined}
                   alt={session.data?.user.name}
                 />
                 <AvatarFallback className="rounded-lg">
@@ -62,7 +62,7 @@ export function NavUser({
                   {session.data?.user.name}
                 </span>
                 <span className="text-muted-foreground truncate text-xs">
-                  {user.email}
+                  {session.data?.user.email}
                 </span>
               </div>
               <IconDotsVertical className="ml-auto size-4" />
@@ -78,7 +78,7 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage
-                    src={session.data?.user.image}
+                    src={session.data?.user.image ?? undefined}
                     alt={session.data?.user.name}
                   />
                   <AvatarFallback className="rounded-lg">
@@ -90,7 +90,7 @@ export function NavUser({
                     {session.data?.user.name}
                   </span>
                   <span className="text-muted-foreground truncate text-xs">
-                    {user.email}
+                    {session.data?.user.email}
                   </span>
                 </div>
               </div>
