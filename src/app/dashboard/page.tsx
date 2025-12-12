@@ -1,10 +1,9 @@
-import { ChartAreaInteractive } from "@/components/chart-area-interactive";
-import { DataTable } from "@/components/data-table";
-import { SectionCards } from "@/components/section-cards";
+import PageHeader from "@/components/page-header";
 import { auth } from "@/server/better-auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
 import React from "react";
+import ChangePassword from "./_components/change-password";
+import ViewSessions from "./_components/view-sessions";
 
 export default async function DashboardPage() {
   const session = await auth.api.getSession({
@@ -13,14 +12,19 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex flex-1 flex-col">
-      <div className="@container/main flex flex-1 flex-col gap-2">
-        <div className="flex flex-col gap-4 py-4 md:gap-6 md:py-6">
-          <SectionCards />
-          <div className="px-4 lg:px-6">
-            <ChartAreaInteractive />
-          </div>
-          <DataTable data={[]} />
-        </div>
+      <PageHeader
+        title={`Welcome to your dashboard, ${session?.user.name}!`}
+        subtitle="Here is an overview of your account and recent activity."
+      />
+      <div className="pb-6">
+        <ChangePassword/>
+        <ViewSessions/>
+      </div>
+      <div className="flex flex-col gap-2 pb-6">
+        <h3 className="text-xl">Session information:</h3>
+        <pre className="bg-muted rounded-md p-4">
+          {JSON.stringify(session, null, 2)}
+        </pre>
       </div>
     </div>
   );
