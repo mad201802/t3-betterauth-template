@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Link from "next/link";
 import {
   Card,
   CardContent,
@@ -23,6 +24,7 @@ import { authClient } from "@/server/better-auth/client";
 
 interface ChangePasswordInterface {
   hasCredentialsAccount: boolean;
+  email: string | undefined;
 }
 
 const changePasswordSchema = z
@@ -161,16 +163,25 @@ export default function ChangePassword(props: ChangePasswordInterface) {
             )}
           />
 
-          <Button type="submit" disabled={isLoadingChangeRequest || !props.hasCredentialsAccount}>
+          <Button
+            type="submit"
+            disabled={isLoadingChangeRequest || !props.hasCredentialsAccount}
+          >
             {isLoadingChangeRequest ? "Updating..." : "Update Password"}
           </Button>
 
           {!props.hasCredentialsAccount && (
-            <p className="text-sm text-muted-foreground">
-              You do not have a credentials account set up.
+            <p className="text-muted-foreground text-sm">
+              You do not have a credentials account set up.{" "}
+              <Link
+                href={`/auth/recovery?email=${encodeURIComponent(props.email ?? "")}`}
+                className="text-blue-600 underline hover:text-blue-700 dark:text-blue-400"
+              >
+                Set a password
+              </Link>{" "}
+              for your account.
             </p>
           )}
-
         </form>
       </CardContent>
     </Card>

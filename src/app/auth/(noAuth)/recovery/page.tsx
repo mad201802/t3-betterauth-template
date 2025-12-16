@@ -20,7 +20,8 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 
@@ -33,12 +34,30 @@ export default function RecoveryPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
+  const searchParams = useSearchParams();
+  const rawEmail = searchParams?.get("email") ?? "";
+
+  // If the query param is percent-encoded (e.g. `%40` for `@`), decode it safely.
+  let emailFromQuery = rawEmail;
+  try {
+    if (rawEmail.includes("%")) {
+      emailFromQuery = decodeURIComponent(rawEmail);
+    }
+  } catch {
+    emailFromQuery = rawEmail;
+  }
+
   const form = useForm<z.infer<typeof recoveryFormSchema>>({
     resolver: zodResolver(recoveryFormSchema),
     defaultValues: {
-      email: "",
+      email: emailFromQuery,
     },
   });
+
+  // If the `email` query param changes after mount, update the form value
+  useEffect(() => {
+    if (emailFromQuery) form.setValue("email", emailFromQuery);
+  }, [emailFromQuery, form]);
 
   const onSubmit = async (data: z.infer<typeof recoveryFormSchema>) => {
     setIsLoading(true);

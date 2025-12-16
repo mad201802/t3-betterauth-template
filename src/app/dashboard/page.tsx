@@ -21,14 +21,8 @@ export default async function DashboardPage() {
         subtitle="Here is an overview of your account and recent activity."
       />
       <div className="flex flex-col pb-6 gap-y-4">
-        <ChangePassword hasCredentialsAccount={userAccounts.some(a => a.providerId == "credential")}/>
+        <ChangePassword hasCredentialsAccount={userAccounts.some(a => a.providerId == "credential")} email={session?.user.email}/>
         <ViewSessions/>
-      </div>
-      <div className="flex flex-col gap-2 pb-6">
-        <h3 className="text-xl">Session information:</h3>
-        <pre className="bg-muted rounded-md p-4">
-          {JSON.stringify(session, null, 2)}
-        </pre>
       </div>
     </div>
   );
