@@ -10,10 +10,6 @@ import { Button } from "@/components/ui/button";
 export default async function Home() {
   const session = await getSession();
 
-  if (session) {
-    void api.post.getLatest.prefetch();
-  }
-
   return (
     <HydrateClient>
       <main className="flex min-h-screen flex-col items-center justify-center">

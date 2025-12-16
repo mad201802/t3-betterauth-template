@@ -19,7 +19,10 @@ export const auth = betterAuth({
         "noreply@yourdomain.com",
         user.email,
         "Reset Your Password",
-        APP_CONFIG.email.resetPasswordMailBody({ user: user.name || user.email, url })
+        APP_CONFIG.email.resetPasswordMailBody({
+          user: user.name || user.email,
+          url,
+        }),
       );
     },
   },
@@ -29,7 +32,10 @@ export const auth = betterAuth({
         "noreply@yourdomain.com",
         user.email,
         "Verify Your Email Address",
-        APP_CONFIG.email.emailVerifyMailBody({ user: user.name || user.email, url })
+        APP_CONFIG.email.emailVerifyMailBody({
+          user: user.name || user.email,
+          url,
+        }),
       );
     },
     autoSignInAfterVerification: true,
@@ -38,7 +44,10 @@ export const auth = betterAuth({
     github: {
       clientId: env.BETTER_AUTH_GITHUB_CLIENT_ID,
       clientSecret: env.BETTER_AUTH_GITHUB_CLIENT_SECRET,
-      redirectURI: "http://localhost:3000/api/auth/callback/github",
+    },
+    google: {
+      clientId: env.BETTER_AUTH_GOOGLE_CLIENT_ID,
+      clientSecret: env.BETTER_AUTH_GOOGLE_CLIENT_SECRET,
     },
   },
 });
