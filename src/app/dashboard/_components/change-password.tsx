@@ -1,4 +1,5 @@
 "use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -20,6 +21,10 @@ import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 
+interface ChangePasswordInterface {
+  hasCredentialsAccount: boolean;
+}
+
 const changePasswordSchema = z
   .object({
     currentPassword: z.string().min(1, "Current password is required"),
@@ -33,8 +38,8 @@ const changePasswordSchema = z
     path: ["confirmPassword"],
   });
 
-export default function ChangePassword() {
-  const [isLoading, setIsLoading] = useState(false);
+export default function ChangePassword(props: ChangePasswordInterface) {
+  const [isLoadingChangeRequest, setIsLoadingChangeRequest] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
@@ -48,7 +53,7 @@ export default function ChangePassword() {
   });
 
   const onSubmit = async (data: z.infer<typeof changePasswordSchema>) => {
-    setIsLoading(true);
+    setIsLoadingChangeRequest(true);
     setError(null);
     setSuccess(null);
 
@@ -70,7 +75,7 @@ export default function ChangePassword() {
       console.error("Password change error:", err);
       setError("An unexpected error occurred");
     } finally {
-      setIsLoading(false);
+      setIsLoadingChangeRequest(false);
     }
   };
 
@@ -104,6 +109,7 @@ export default function ChangePassword() {
                     {...field}
                     type="password"
                     placeholder="Enter your current password"
+                    disabled={!props.hasCredentialsAccount}
                   />
                 </FieldGroup>
                 <FieldError>
@@ -124,6 +130,7 @@ export default function ChangePassword() {
                     {...field}
                     type="password"
                     placeholder="Enter your new password"
+                    disabled={!props.hasCredentialsAccount}
                   />
                 </FieldGroup>
                 <FieldError>
@@ -144,6 +151,7 @@ export default function ChangePassword() {
                     {...field}
                     type="password"
                     placeholder="Confirm your new password"
+                    disabled={!props.hasCredentialsAccount}
                   />
                 </FieldGroup>
                 <FieldError>
@@ -153,9 +161,16 @@ export default function ChangePassword() {
             )}
           />
 
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Updating..." : "Update Password"}
+          <Button type="submit" disabled={isLoadingChangeRequest || !props.hasCredentialsAccount}>
+            {isLoadingChangeRequest ? "Updating..." : "Update Password"}
           </Button>
+
+          {!props.hasCredentialsAccount && (
+            <p className="text-sm text-muted-foreground">
+              You do not have a credentials account set up.
+            </p>
+          )}
+
         </form>
       </CardContent>
     </Card>

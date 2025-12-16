@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { Resend } from "resend";
 
-const resend = new Resend(env.RESEND_API_KEY as string | undefined);
+const resend = env.RESEND_API_KEY ? new Resend(env.RESEND_API_KEY) : null;
 
 export function sendMail(
   from: string,
@@ -9,7 +9,7 @@ export function sendMail(
   subject: string,
   html: string,
 ) {
-  if (!env.RESEND_API_KEY) {
+  if (!resend) {
     if (process.env.NODE_ENV === "development") {
       console.log("--- Email Sending Disabled ---");
       console.log(`From: ${from}`);

@@ -10,14 +10,18 @@ export default async function DashboardPage() {
     headers: await headers(),
   });
 
+  const userAccounts = await auth.api.listUserAccounts({
+    headers: await headers(),
+  });
+
   return (
     <div className="flex flex-1 flex-col">
       <PageHeader
         title={`Welcome to your dashboard, ${session?.user.name}!`}
         subtitle="Here is an overview of your account and recent activity."
       />
-      <div className="pb-6">
-        <ChangePassword/>
+      <div className="flex flex-col pb-6 gap-y-4">
+        <ChangePassword hasCredentialsAccount={userAccounts.some(a => a.providerId == "credential")}/>
         <ViewSessions/>
       </div>
       <div className="flex flex-col gap-2 pb-6">
