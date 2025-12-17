@@ -32,7 +32,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { APP_CONFIG } from "@/app_config"
+import { APP_CONFIG } from "@/config"
 
 const data = {
   user: {

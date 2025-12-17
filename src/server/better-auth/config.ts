@@ -4,7 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { env } from "@/env";
 import { db } from "@/server/db";
 import { sendMail } from "@/config/email";
-import { APP_CONFIG } from "@/app_config";
+import { APP_CONFIG } from "@/config";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, {
@@ -16,7 +16,7 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       await sendMail(
-        "noreply@yourdomain.com",
+        APP_CONFIG.email.fromAddress,
         user.email,
         "Reset Your Password",
         APP_CONFIG.email.resetPasswordMailBody({
@@ -28,8 +28,8 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }) => {
-      await sendMail(
-        "noreply@yourdomain.com",
+      void sendMail(
+        APP_CONFIG.email.fromAddress,
         user.email,
         "Verify Your Email Address",
         APP_CONFIG.email.emailVerifyMailBody({

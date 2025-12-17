@@ -7,19 +7,22 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    // === Required in all environments ===
+    NODE_ENV: z
+      .enum(["development", "test", "production"])
+      .default("development"),
     BETTER_AUTH_SECRET:
       process.env.NODE_ENV === "production"
         ? z.string()
         : z.string().optional(),
+    DATABASE_URL: z.url(),
+
+    // === Auth ===
     BETTER_AUTH_GITHUB_CLIENT_ID: z.string(),
     BETTER_AUTH_GITHUB_CLIENT_SECRET: z.string(),
-    DATABASE_URL: z.string().url(),
-    NODE_ENV: z
-      .enum(["development", "test", "production"])
-      .default("development"),
-    RESEND_API_KEY: z.string().optional(),
     BETTER_AUTH_GOOGLE_CLIENT_ID: z.string(),
     BETTER_AUTH_GOOGLE_CLIENT_SECRET: z.string(),
+    RESEND_API_KEY: z.string().optional(),
   },
 
   /**

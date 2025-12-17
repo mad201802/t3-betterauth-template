@@ -16,9 +16,9 @@ import {
   IconMapPin,
   IconCalendar,
   IconClock,
-  IconLogout,
 } from "@tabler/icons-react";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 function getDeviceIcon(userAgent?: string | null) {
   if (!userAgent) return <IconDeviceDesktop className="h-5 w-5" />;
@@ -185,6 +185,7 @@ export default async function ViewSessions() {
                               },
                               headers: await headers(),
                             });
+                            revalidatePath("/dashboard/account");
                           }}
                         >
                           Revoke session

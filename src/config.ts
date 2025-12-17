@@ -4,7 +4,7 @@ export const APP_CONFIG = {
     applicationShortName: "BetterAuth",
   },
   email: {
-    fromAddress: "test@test.com",
+    fromAddress: "Acme <onboarding@resend.dev>",
     resetPasswordMailBody: ({ user, url }: { user: string; url: string }) => `
         <!DOCTYPE html>
         <html>
