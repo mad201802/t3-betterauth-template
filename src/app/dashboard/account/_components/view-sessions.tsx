@@ -92,6 +92,14 @@ export default async function ViewSessions() {
     headers: await headers(),
   });
 
+  const sortedSessions = [...sessions].sort((a, b) => {
+    const aIsCurrent = a.token === currentSession?.session.token;
+    const bIsCurrent = b.token === currentSession?.session.token;
+    if (aIsCurrent && !bIsCurrent) return -1;
+    if (!aIsCurrent && bIsCurrent) return 1;
+    return 0;
+  });
+
   return (
     <Card>
       <CardHeader>
@@ -110,7 +118,7 @@ export default async function ViewSessions() {
           </div>
         ) : (
           <div className="space-y-4">
-            {sessions.map((session) => {
+            {sortedSessions.map((session) => {
               const isCurrentSession =
                 session.token === currentSession?.session.token;
               const expiresAt = new Date(session.expiresAt);

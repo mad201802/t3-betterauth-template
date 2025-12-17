@@ -23,6 +23,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
+import { useRedirectParam } from "@/hooks/use-redirect-param";
 
 const signUpFormSchema = z
   .object({
@@ -37,6 +38,7 @@ const signUpFormSchema = z
   });
 
 export default function SignInPage() {
+  const redirectTo = useRedirectParam();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [emailSent, setEmailSent] = useState(false);
@@ -62,7 +64,7 @@ export default function SignInPage() {
           email: data.email,
           password: data.password,
           name: data.name,
-          callbackURL: "/dashboard",
+          callbackURL: redirectTo,
         },
         {
           onError: (ctx) => {
@@ -227,7 +229,7 @@ export default function SignInPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Already have an account?{" "}
-                  <Link href="/auth/sign-in">Sign in</Link>
+                  <Link href={`/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}`}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

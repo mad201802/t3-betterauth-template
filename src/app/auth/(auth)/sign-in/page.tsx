@@ -25,6 +25,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
+import { useRedirectParam } from "@/hooks/use-redirect-param";
 
 const signInFormSchema = z.object({
   email: z.string().email(),
@@ -33,6 +34,7 @@ const signInFormSchema = z.object({
 
 export default function SignInPage() {
   const router = useRouter();
+  const redirectTo = useRedirectParam();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -63,7 +65,7 @@ export default function SignInPage() {
             }
           },
           onSuccess: () => {
-            router.push("/dashboard");
+            router.push(redirectTo);
           },
         },
       );
@@ -83,7 +85,7 @@ export default function SignInPage() {
       await authClient.signIn.social({
         provider,
       });
-      router.push("/dashboard");
+      router.push(redirectTo);
     } catch (err) {
       console.error("Sign in error:", err);
       setError("An unexpected error occurred");
@@ -199,7 +201,7 @@ export default function SignInPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
-                  <Link href="/auth/sign-up">Sign up</Link>
+                  <Link href={`/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}`}>Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
