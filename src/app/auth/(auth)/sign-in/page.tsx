@@ -84,6 +84,7 @@ export default function SignInPage() {
     try {
       await authClient.signIn.social({
         provider,
+        callbackURL: redirectTo,
       });
       router.push(redirectTo);
     } catch (err) {
