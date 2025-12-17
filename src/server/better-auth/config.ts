@@ -1,5 +1,6 @@
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { twoFactor } from "better-auth/plugins"
 
 import { env } from "@/env";
 import { db } from "@/server/db";
@@ -7,6 +8,10 @@ import { sendMail } from "@/config/email";
 import { APP_CONFIG } from "@/config";
 
 export const auth = betterAuth({
+  appName: APP_CONFIG.naming.applicationShortName,
+  plugins: [
+    twoFactor(),
+  ],
   database: prismaAdapter(db, {
     provider: "sqlite", // or "sqlite" or "mysql"
   }),

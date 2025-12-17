@@ -26,6 +26,9 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
+  twoFactorEnabled Boolean?    @default(false)
+  twofactors       TwoFactor[]
+
   @@unique([email])
   @@map("user")
 }
@@ -43,6 +46,7 @@ model Session {
 
   @@unique([token])
   @@map("session")
+  @@index([userId])
 }
 
 model Account {
@@ -62,6 +66,7 @@ model Account {
   updatedAt             DateTime  @updatedAt
 
   @@map("account")
+  @@index([userId])
 }
 
 model Verification {
@@ -73,4 +78,17 @@ model Verification {
   updatedAt  DateTime @default(now()) @updatedAt
 
   @@map("verification")
+  @@index([identifier])
+}
+
+model TwoFactor {
+  id          String @id
+  secret      String
+  backupCodes String
+  userId      String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([secret])
+  @@index([userId])
+  @@map("twoFactor")
 }

@@ -5,6 +5,7 @@ import React from "react";
 import Account from "./_components/account";
 import ChangePassword from "./_components/change-password";
 import ViewSessions from "./_components/view-sessions";
+import TwoFactorAuth from "./_components/two-factor-auth";
 
 export default async function DashboardSettingsPage() {
   const session = await auth.api.getSession({
@@ -34,6 +35,12 @@ export default async function DashboardSettingsPage() {
             (a) => a.providerId == "credential",
           )}
           email={session?.user.email}
+        />
+        <TwoFactorAuth
+          twoFactorEnabled={session?.user.twoFactorEnabled ?? false}
+          hasCredentialsAccount={userAccounts.some(
+            (a) => a.providerId == "credential",
+          )}
         />
         <ViewSessions />
       </div>
