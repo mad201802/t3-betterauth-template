@@ -65,7 +65,7 @@ export default function SignInPage() {
             }
           },
           onSuccess: () => {
-            router.push(redirectTo);
+            router.push(redirectTo ?? '/dashboard');
           },
         },
       );
@@ -84,9 +84,9 @@ export default function SignInPage() {
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: redirectTo,
+        callbackURL: redirectTo ?? '/dashboard',
       });
-      router.push(redirectTo);
+      router.push(redirectTo ?? '/dashboard');
     } catch (err) {
       console.error("Sign in error:", err);
       setError("An unexpected error occurred");
@@ -202,7 +202,7 @@ export default function SignInPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Don&apos;t have an account?{" "}
-                  <Link href={`/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}`}>Sign up</Link>
+                  <Link href={redirectTo ? `/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}` : '/auth/sign-up'}>Sign up</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

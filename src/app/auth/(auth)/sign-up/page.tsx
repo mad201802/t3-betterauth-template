@@ -64,7 +64,7 @@ export default function SignInPage() {
           email: data.email,
           password: data.password,
           name: data.name,
-          callbackURL: redirectTo,
+          callbackURL: redirectTo ?? '/dashboard',
         },
         {
           onError: (ctx) => {
@@ -229,7 +229,7 @@ export default function SignInPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Already have an account?{" "}
-                  <Link href={`/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}`}>Sign in</Link>
+                  <Link href={redirectTo ? `/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}` : '/auth/sign-in'}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

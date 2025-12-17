@@ -1,7 +1,10 @@
 import { useSearchParams } from 'next/navigation'
 
-export function useRedirectParam(): string {
+export function useRedirectParam(): string | null {
   const searchParams = useSearchParams()
   const rawRedirect = searchParams.get('redirect')
-  return rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.includes('://') ? rawRedirect : '/dashboard'
+  if (rawRedirect && rawRedirect.startsWith('/') && !rawRedirect.includes('://')) {
+    return rawRedirect
+  }
+  return null
 }
