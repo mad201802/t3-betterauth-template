@@ -26,7 +26,7 @@ export const auth = betterAuth({
         APP_CONFIG.email.fromAddress,
         user.email,
         "Reset Your Password",
-        APP_CONFIG.email.resetPasswordMailBody({
+        APP_CONFIG.email.getResetPasswordEmailBody({
           user: user.name || user.email,
           url,
         }),
@@ -39,7 +39,7 @@ export const auth = betterAuth({
         APP_CONFIG.email.fromAddress,
         user.email,
         "Verify Your Email Address",
-        APP_CONFIG.email.emailVerifyMailBody({
+        APP_CONFIG.email.getVerificationEmailBody({
           user: user.name || user.email,
           url,
         }),

@@ -28,15 +28,11 @@ import { authClient } from "@/server/better-auth/client";
 import Link from "next/link";
 import { APP_CONFIG } from "@/config";
 
-export function NavUser({
-  user: _user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+/**
+ * User navigation component for the sidebar footer
+ * Displays user info from session and provides account/logout options
+ */
+export function NavUser() {
   const { isMobile } = useSidebar();
 
   const session = authClient.useSession();

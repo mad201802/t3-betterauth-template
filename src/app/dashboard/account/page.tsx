@@ -2,11 +2,11 @@ import PageHeader from "@/components/page-header";
 import { auth } from "@/server/better-auth";
 import { headers } from "next/headers";
 import React from "react";
-import Account from "./_components/account";
-import ChangePassword from "./_components/change-password";
-import ViewSessions from "./_components/view-sessions";
-import TwoFactorAuth from "./_components/two-factor/two-factor-auth";
-import ManagePasskeys from "./_components/manage-passkeys";
+import Account from "@/components/account/account";
+import ChangePassword from "@/components/account/change-password";
+import ViewSessions from "@/components/account/view-sessions";
+import TwoFactorAuth from "@/components/account/two-factor/two-factor-auth";
+import ManagePasskeys from "@/components/account/manage-passkeys";
 
 export default async function DashboardSettingsPage() {
   const session = await auth.api.getSession({

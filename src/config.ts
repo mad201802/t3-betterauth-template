@@ -1,48 +1,100 @@
-type EmailTemplateParams = {
-  user: string;
-  url: string;
-};
+/**
+ * Application configuration
+ *
+ * @module config
+ * @description Central configuration for the application.
+ * Customize these values to match your SaaS branding and requirements.
+ */
 
+import {
+  getResetPasswordEmailTemplate,
+  getEmailVerificationTemplate,
+} from "@/lib/email-templates";
+
+/**
+ * Application configuration type
+ */
 type AppConfig = {
   readonly naming: {
+    /** Full application name */
     readonly applicationName: string;
+    /** Short name for the app (used in sidebar, etc.) */
     readonly applicationShortName: string;
   };
   readonly routes: {
+    /** Public home page */
     readonly home: string;
+    /** Sign in page */
     readonly signIn: string;
+    /** Sign up page */
     readonly signUp: string;
+    /** Password recovery page */
     readonly recovery: string;
+    /** Reset password page (from email link) */
     readonly resetPassword: string;
+    /** 2FA verification page */
     readonly verify2FA: string;
+    /** Main dashboard */
     readonly dashboard: string;
+    /** Account settings page */
     readonly accountSettings: string;
   };
   readonly auth: {
+    /** Where to redirect after successful authentication */
     readonly defaultRedirectAfterAuth: string;
+    /** Minimum password length */
     readonly passwordMinLength: number;
+    /** Minimum email length */
     readonly emailMinLength: number;
+    /** Maximum email length (RFC 5321) */
     readonly emailMaxLength: number;
   };
   readonly ui: {
+    /** QR code size in pixels for 2FA setup */
     readonly qrCodeSize: number;
   };
   readonly links: {
+    /** Terms of service URL */
     readonly termsOfService: string;
+    /** Privacy policy URL */
     readonly privacyPolicy: string;
   };
   readonly email: {
+    /** Email sender address */
     readonly fromAddress: string;
-    readonly resetPasswordMailBody: (params: EmailTemplateParams) => string;
-    readonly emailVerifyMailBody: (params: EmailTemplateParams) => string;
+    /** Generate password reset email body */
+    readonly getResetPasswordEmailBody: (params: {
+      user: string;
+      url: string;
+    }) => string;
+    /** Generate email verification email body */
+    readonly getVerificationEmailBody: (params: {
+      user: string;
+      url: string;
+    }) => string;
   };
 };
 
+/**
+ * Main application configuration
+ *
+ * @example
+ * ```ts
+ * import { APP_CONFIG } from "@/config";
+ *
+ * // Use app name
+ * console.log(APP_CONFIG.naming.applicationName);
+ *
+ * // Navigate to dashboard
+ * router.push(APP_CONFIG.routes.dashboard);
+ * ```
+ */
 export const APP_CONFIG = {
   naming: {
     applicationName: "BetterAuth Template",
     applicationShortName: "BetterAuth",
   },
+
   routes: {
     // Public routes
     home: "/",
@@ -58,82 +110,26 @@ export const APP_CONFIG = {
     dashboard: "/dashboard",
     accountSettings: "/dashboard/account",
   },
+
   auth: {
-    // Default redirect after successful auth
     defaultRedirectAfterAuth: "/dashboard",
-
-    // Password requirements
     passwordMinLength: 8,
-
-    // Email requirements (RFC 5321)
     emailMinLength: 5,
     emailMaxLength: 254,
   },
+
   ui: {
-    // QR code size for 2FA
     qrCodeSize: 200,
   },
+
   links: {
     termsOfService: "#",
     privacyPolicy: "#",
   },
+
   email: {
     fromAddress: "Acme <onboarding@resend.dev>",
-    resetPasswordMailBody: ({ user, url }: EmailTemplateParams) => `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Reset Your Password</title>
-          </head>
-          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(to right, #4f46e5, #7c3aed); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">Reset Your Password</h1>
-            </div>
-            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
-              <p style="font-size: 16px; margin-bottom: 20px;">Hi ${user},</p>
-              <p style="font-size: 16px; margin-bottom: 20px;">We received a request to reset your password. Click the button below to create a new password:</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${url}" style="background: #4f46e5; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600; font-size: 16px;">Reset Password</a>
-              </div>
-              <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">If the button doesn't work, copy and paste this link into your browser:</p>
-              <p style="font-size: 14px; color: #4f46e5; word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 4px;">${url}</p>
-              <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">This link will expire in 1 hour for security reasons.</p>
-              <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">If you didn't request a password reset, you can safely ignore this email.</p>
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-              <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">This is an automated message, please do not reply.</p>
-            </div>
-          </body>
-        </html>
-        `,
-    emailVerifyMailBody: ({ user, url }: EmailTemplateParams) => `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Verify Your Email</title>
-          </head>
-          <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-            <div style="background: linear-gradient(to right, #10b981, #059669); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-              <h1 style="color: white; margin: 0; font-size: 28px;">Welcome! 🎉</h1>
-            </div>
-            <div style="background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; border-radius: 0 0 10px 10px;">
-              <p style="font-size: 16px; margin-bottom: 20px;">Hi ${user},</p>
-              <p style="font-size: 16px; margin-bottom: 20px;">Thank you for signing up! Please verify your email address to complete your registration and get started.</p>
-              <div style="text-align: center; margin: 30px 0;">
-                <a href="${url}" style="background: #10b981; color: white; padding: 14px 28px; text-decoration: none; border-radius: 6px; display: inline-block; font-weight: 600; font-size: 16px;">Verify Email Address</a>
-              </div>
-              <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">If the button doesn't work, copy and paste this link into your browser:</p>
-              <p style="font-size: 14px; color: #10b981; word-break: break-all; background: #f3f4f6; padding: 10px; border-radius: 4px;">${url}</p>
-              <p style="font-size: 14px; color: #6b7280; margin-top: 30px;">This verification link will expire in 24 hours.</p>
-              <p style="font-size: 14px; color: #6b7280; margin-top: 20px;">If you didn't create an account, you can safely ignore this email.</p>
-              <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 30px 0;">
-              <p style="font-size: 12px; color: #9ca3af; text-align: center; margin: 0;">This is an automated message, please do not reply.</p>
-            </div>
-          </body>
-        </html>
-        `,
+    getResetPasswordEmailBody: getResetPasswordEmailTemplate,
+    getVerificationEmailBody: getEmailVerificationTemplate,
   },
 } as const satisfies AppConfig;
