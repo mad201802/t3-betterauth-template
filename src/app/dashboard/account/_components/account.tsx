@@ -66,11 +66,29 @@ export default function Account({
   const [isUnlinking, setIsUnlinking] = useState<string | null>(null);
 
   const searchParams = useSearchParams();
+  const ERROR_PARAM_REMOVE_DELAY = 2_000; // milliseconds
 
   useEffect(() => {
-    if (searchParams?.get("error") === "email_doesn't_match") {
+    const error = searchParams?.get("error");
+    if (!error) return;
+
+    // Show an appropriate toast for known error codes
+    if (error === "email_doesn't_match") {
       toast.error("The account email does not match.");
+    } else {
+      // Fallback: show the raw message (or you can map more codes here)
+      toast.error(error);
     }
+
+    const timeoutId = window.setTimeout(() => {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("error");
+      window.history.replaceState({}, "", url.toString());
+    }, ERROR_PARAM_REMOVE_DELAY);
+
+    return () => {
+      clearTimeout(timeoutId);
+    };
   }, [searchParams]);
 
   const handleLinkProvider = async (providerId: string) => {
