@@ -21,25 +21,32 @@ import {
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
-import { createPasswordConfirmationSchema } from "@/lib/validation-schemas";
+import { passwordSchema } from "@/lib/validation-schemas";
 import { APP_CONFIG } from "@/config";
 import { AuthFormFooter } from "@/components/auth-form-footer";
 
-const resetPasswordFormSchema = createPasswordConfirmationSchema()
-  .extend({
-    newPassword: z
-      .string()
-      .min(
-        APP_CONFIG.auth.passwordMinLength,
-        `Password must be at least ${APP_CONFIG.auth.passwordMinLength} characters long`,
-      ),
+const resetPasswordFormSchema = z
+  .object({
+    newPassword: passwordSchema,
+    confirmPassword: z.string().min(APP_CONFIG.auth.passwordMinLength),
   })
-  .omit({ password: true });
+  .refine((data) => data.newPassword === data.confirmPassword, {
+    message: "Passwords don't match",
+    path: ["confirmPassword"],
+  });
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ResetPasswordForm />
+    </Suspense>
+  );
+}
+
+function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isLoading, setIsLoading] = useState(false);

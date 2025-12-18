@@ -18,7 +18,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
@@ -32,6 +32,14 @@ const recoveryFormSchema = z.object({
 });
 
 export default function RecoveryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <RecoveryForm />
+    </Suspense>
+  );
+}
+
+function RecoveryForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);

@@ -23,14 +23,14 @@ import {
 } from "@/components/ui/input-otp";
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
 import { toast } from "sonner";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
 import { APP_CONFIG } from "@/config";
 
-export default function Verify2FAPage() {
+function Verify2FAForm() {
   const router = useRouter();
   const redirectTo = useRedirectParam();
   const [isLoading, setIsLoading] = useState(false);
@@ -159,5 +159,13 @@ export default function Verify2FAPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function Verify2FAPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <Verify2FAForm />
+    </Suspense>
   );
 }
