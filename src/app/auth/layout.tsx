@@ -1,3 +1,4 @@
+import { APP_CONFIG } from "@/config";
 import { GalleryVerticalEnd } from "lucide-react";
 
 interface AuthLayoutProps {
@@ -12,7 +13,7 @@ export default async function AuthLayout(props: AuthLayoutProps) {
           <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
             <GalleryVerticalEnd className="size-4" />
           </div>
-          T3 BetterAuth SaaS Template
+          {APP_CONFIG.naming.applicationName}
         </a>
         {props.children}
       </div>

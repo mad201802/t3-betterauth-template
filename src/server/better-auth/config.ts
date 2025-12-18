@@ -4,7 +4,7 @@ import { twoFactor } from "better-auth/plugins";
 
 import { env } from "@/env";
 import { db } from "@/server/db";
-import { sendMail } from "@/config/email";
+import { sendMail } from "@/server/better-auth/config/email";
 import { APP_CONFIG } from "@/config";
 
 export const auth = betterAuth({

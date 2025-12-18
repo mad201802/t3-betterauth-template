@@ -5,7 +5,7 @@ import React from "react";
 import Account from "./_components/account";
 import ChangePassword from "./_components/change-password";
 import ViewSessions from "./_components/view-sessions";
-import TwoFactorAuth from "./_components/two-factor-auth";
+import TwoFactorAuth from "./_components/two-factor/two-factor-auth";
 
 export default async function DashboardSettingsPage() {
   const session = await auth.api.getSession({
