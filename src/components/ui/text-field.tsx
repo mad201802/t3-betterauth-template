@@ -54,6 +54,7 @@ export function TextField({
 interface EmailFieldProps {
   id?: string;
   disabled?: boolean;
+  autoComplete?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   field: ControllerRenderProps<any, any>;
   fieldState: ControllerFieldState;
@@ -65,6 +66,7 @@ interface EmailFieldProps {
 export function EmailField({
   id,
   disabled,
+  autoComplete,
   field,
   fieldState,
 }: EmailFieldProps) {
@@ -76,6 +78,7 @@ export function EmailField({
       type="email"
       disabled={disabled}
       required
+      autoComplete={autoComplete}
       field={field}
       fieldState={fieldState}
     />

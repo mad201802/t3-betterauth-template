@@ -16,6 +16,7 @@ interface PasswordFieldProps {
   field: ControllerRenderProps<any, any>;
   fieldState: ControllerFieldState;
   labelAddon?: ReactNode;
+  autoComplete?: string;
 }
 
 export default function PasswordInputField({
@@ -24,6 +25,7 @@ export default function PasswordInputField({
   field,
   fieldState,
   labelAddon,
+  autoComplete,
 }: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,6 +41,7 @@ export default function PasswordInputField({
           id={id}
           aria-invalid={fieldState.invalid}
           type={showPassword ? "text" : "password"}
+          autoComplete={autoComplete}
           required
         />
         <Button

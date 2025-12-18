@@ -6,6 +6,7 @@ import Account from "./_components/account";
 import ChangePassword from "./_components/change-password";
 import ViewSessions from "./_components/view-sessions";
 import TwoFactorAuth from "./_components/two-factor/two-factor-auth";
+import ManagePasskeys from "./_components/manage-passkeys";
 
 export default async function DashboardSettingsPage() {
   const session = await auth.api.getSession({
@@ -42,6 +43,7 @@ export default async function DashboardSettingsPage() {
             (a) => a.providerId == "credential",
           )}
         />
+        <ManagePasskeys />
         <ViewSessions />
       </div>
     </div>

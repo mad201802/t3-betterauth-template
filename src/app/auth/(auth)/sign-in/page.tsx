@@ -30,6 +30,7 @@ import { emailSchema, passwordSchema } from "@/lib/validation-schemas";
 import { EmailField } from "@/components/ui/text-field";
 import { AuthFormFooter } from "@/components/auth-form-footer";
 import { APP_CONFIG } from "@/config";
+import { IconKey } from "@tabler/icons-react";
 
 const signInFormSchema = z.object({
   email: emailSchema,
@@ -59,11 +60,61 @@ export default function SignInPage() {
     }
   }, [searchParams]);
 
-  const onEmailLoginSubmit = async (data: z.infer<typeof signInFormSchema>) => {
+  // Initialize passkey conditional UI
+  useEffect(() => {
+    const initConditionalUI = async () => {
+      // Check if browser supports conditional UI
+      if (
+        typeof window !== "undefined" &&
+        window.PublicKeyCredential &&
+        typeof window.PublicKeyCredential.isConditionalMediationAvailable ===
+          "function"
+      ) {
+        const available =
+          await window.PublicKeyCredential.isConditionalMediationAvailable();
+        if (available) {
+          // Preload passkeys for autofill
+          void authClient.signIn.passkey({
+            autoFill: true,
+            fetchOptions: {
+              onSuccess: redirectToDashboard,
+              onError: (ctx) => {
+                // Silently fail for conditional UI
+                console.log("Conditional UI error:", ctx.error);
+              },
+            },
+          });
+        }
+      }
+    };
+
+    void initConditionalUI();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const handleAuthAction = async (
+    action: () => Promise<void>,
+    errorMessage = "An unexpected error occurred",
+  ) => {
     setIsLoading(true);
     setError(null);
 
     try {
+      await action();
+    } catch (err) {
+      console.error("Auth error:", err);
+      setError(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const redirectToDashboard = () => {
+    router.push(redirectTo ?? APP_CONFIG.routes.dashboard);
+  };
+
+  const onEmailLoginSubmit = async (data: z.infer<typeof signInFormSchema>) => {
+    await handleAuthAction(async () => {
       await authClient.signIn.email(
         {
           email: data.email,
@@ -77,35 +128,37 @@ export default function SignInPage() {
               setError(ctx.error.message ?? "Failed to sign in");
             }
           },
-          onSuccess: () => {
-            router.push(redirectTo ?? APP_CONFIG.routes.dashboard);
-          },
+          onSuccess: redirectToDashboard,
         },
       );
-    } catch (err) {
-      console.error("Sign in error:", err);
-      setError("An unexpected error occurred");
-    } finally {
-      setIsLoading(false);
-    }
+    });
   };
 
   const onSocialSubmit = async (provider: "google" | "github") => {
-    setIsLoading(true);
-    setError(null);
-
-    try {
+    await handleAuthAction(async () => {
       await authClient.signIn.social({
         provider,
         callbackURL: redirectTo ?? APP_CONFIG.routes.dashboard,
       });
-      router.push(redirectTo ?? APP_CONFIG.routes.dashboard);
-    } catch (err) {
-      console.error("Sign in error:", err);
-      setError("An unexpected error occurred");
-    } finally {
-      setIsLoading(false);
-    }
+      redirectToDashboard();
+    });
+  };
+
+  const onPasskeySubmit = async () => {
+    await handleAuthAction(async () => {
+      const { error } = await authClient.signIn.passkey({
+        fetchOptions: {
+          onSuccess: redirectToDashboard,
+          onError: (ctx) => {
+            setError(ctx.error.message ?? "Failed to sign in with passkey");
+          },
+        },
+      });
+
+      if (error) {
+        setError(error.message ?? "Failed to sign in with passkey");
+      }
+    }, "Failed to sign in with passkey");
   };
 
   return (
@@ -121,6 +174,15 @@ export default function SignInPage() {
         <CardContent>
           <FieldGroup className="gap-3">
             <Field>
+              <Button
+                variant="outline"
+                type="button"
+                onClick={onPasskeySubmit}
+                disabled={isLoading}
+              >
+                <IconKey size={18} />
+                Login with Passkey
+              </Button>
               <Button
                 variant="outline"
                 type="button"
@@ -161,6 +223,7 @@ export default function SignInPage() {
                   id="form-sign-in-email"
                   field={field}
                   fieldState={fieldState}
+                  autoComplete="username webauthn"
                 />
               )}
             />
@@ -176,6 +239,7 @@ export default function SignInPage() {
                     id="form-sign-in-password"
                     field={field}
                     fieldState={fieldState}
+                    autoComplete="current-password webauthn"
                     labelAddon={
                       <Link
                         href={APP_CONFIG.routes.recovery}
