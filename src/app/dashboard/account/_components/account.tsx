@@ -18,9 +18,11 @@ import {
 } from "@tabler/icons-react";
 import {
   useState,
+  useEffect,
   type ForwardRefExoticComponent,
   type RefAttributes,
 } from "react";
+import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { APP_CONFIG } from "@/config";
 
@@ -63,12 +65,21 @@ export default function Account({
   const [isLinking, setIsLinking] = useState<string | null>(null);
   const [isUnlinking, setIsUnlinking] = useState<string | null>(null);
 
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams?.get("error") === "email_doesn't_match") {
+      toast.error("The account email does not match.");
+    }
+  }, [searchParams]);
+
   const handleLinkProvider = async (providerId: string) => {
     setIsLinking(providerId);
     try {
       await authClient.linkSocial({
         provider: providerId as "github" | "google",
         callbackURL: APP_CONFIG.routes.accountSettings,
+        errorCallbackURL: APP_CONFIG.routes.accountSettings,
       });
     } catch (error) {
       console.error("Failed to link provider:", error);
