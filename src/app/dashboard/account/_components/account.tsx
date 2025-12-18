@@ -16,6 +16,7 @@ import {
   type RefAttributes,
 } from "react";
 import { toast } from "sonner";
+import { APP_CONFIG } from "@/config";
 
 interface Account {
   accountId: string;
@@ -61,7 +62,7 @@ export default function Account({
     try {
       await authClient.linkSocial({
         provider: providerId as "github" | "google",
-        callbackURL: "/dashboard/account",
+        callbackURL: APP_CONFIG.routes.accountSettings,
       });
     } catch (error) {
       console.error("Failed to link provider:", error);
@@ -110,7 +111,7 @@ export default function Account({
           Link your account to third-party authentication providers.
         </CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="flex flex-col gap-3">
         {configuredProviders
           .filter((p) => p !== "credential")
           .map((providerId) => {

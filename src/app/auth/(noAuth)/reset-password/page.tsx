@@ -24,18 +24,13 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
+import { createPasswordConfirmationSchema } from "@/lib/validation-schemas";
+import { APP_CONFIG } from "@/config";
+import { AuthFormFooter } from "@/components/auth-form-footer";
 
-const resetPasswordFormSchema = z
-  .object({
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters long"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+const resetPasswordFormSchema = createPasswordConfirmationSchema().extend({
+  newPassword: z.string().min(APP_CONFIG.auth.passwordMinLength, `Password must be at least ${APP_CONFIG.auth.passwordMinLength} characters long`),
+}).omit({ password: true });
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -83,7 +78,7 @@ export default function ResetPasswordPage() {
       if (error) {
         setError(error.message ?? "Failed to reset password");
       } else {
-        router.push("/auth/sign-in?reset=success");
+        router.push(`${APP_CONFIG.routes.signIn}?reset=success`);
       }
     } catch (err) {
       console.error("Password reset error:", err);
@@ -163,17 +158,14 @@ export default function ResetPasswordPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Remember your password?{" "}
-                  <Link href="/auth/sign-in">Sign in</Link>
+                  <Link href={APP_CONFIG.routes.signIn}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+      <AuthFormFooter />
     </div>
   );
 }

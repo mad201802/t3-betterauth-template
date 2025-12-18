@@ -6,6 +6,7 @@ import { auth } from "@/server/better-auth";
 import { getSession } from "@/server/better-auth/server";
 import { api, HydrateClient } from "@/trpc/server";
 import { Button } from "@/components/ui/button";
+import { APP_CONFIG } from "@/config";
 
 export default async function Home() {
   const session = await getSession();
@@ -48,12 +49,12 @@ export default async function Home() {
               </p>
               {session && (
                 <Button asChild>
-                  <Link href="/dashboard">Go to Dashboard</Link>
+                  <Link href={APP_CONFIG.routes.dashboard}>Go to Dashboard</Link>
                 </Button>
               )}
               {!session && (
                 <Button asChild>
-                  <Link href="/auth/sign-up">Sign up</Link>
+                  <Link href={APP_CONFIG.routes.signUp}>Sign up</Link>
                 </Button>
               )}
             </div>

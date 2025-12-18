@@ -43,7 +43,7 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: APP_CONFIG.routes.dashboard,
       icon: IconDashboard,
     }
   ],

@@ -25,7 +25,7 @@ export default async function DashboardSettingsPage() {
         title={`Account Settings`}
         subtitle="Here you can manage your account settings."
       />
-      <div className="flex flex-col gap-y-4 pb-6">
+      <div className="flex flex-col gap-3 pb-6">
         <Account
           userAccounts={userAccounts}
           configuredProviders={configuredProviders}

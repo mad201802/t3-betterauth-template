@@ -9,7 +9,6 @@ import {
   FieldDescription,
   FieldError,
   FieldGroup,
-  FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
 import {
@@ -19,7 +18,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import PasswordInputField from "@/components/ui/password-input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -27,19 +25,14 @@ import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
+import { emailSchema, passwordSchema } from "@/lib/validation-schemas";
+import { EmailField } from "@/components/ui/text-field";
+import { AuthFormFooter } from "@/components/auth-form-footer";
+import { APP_CONFIG } from "@/config";
 
 const signInFormSchema = z.object({
-  email: z
-    .email("Invalid email address")
-    .min(5)
-    .max(254) // RFC 5321
-    .toLowerCase()
-    .trim()
-    .regex(
-      /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      "Invalid email format",
-    ),
-  password: z.string().min(8, "Password must be at least 8 characters long"),
+  email: emailSchema,
+  password: passwordSchema,
 });
 
 export default function SignInPage() {
@@ -75,7 +68,7 @@ export default function SignInPage() {
             }
           },
           onSuccess: () => {
-            router.push(redirectTo ?? "/dashboard");
+            router.push(redirectTo ?? APP_CONFIG.routes.dashboard);
           },
         },
       );
@@ -94,9 +87,9 @@ export default function SignInPage() {
     try {
       await authClient.signIn.social({
         provider,
-        callbackURL: redirectTo ?? "/dashboard",
+        callbackURL: redirectTo ?? APP_CONFIG.routes.dashboard,
       });
-      router.push(redirectTo ?? "/dashboard");
+      router.push(redirectTo ?? APP_CONFIG.routes.dashboard);
     } catch (err) {
       console.error("Sign in error:", err);
       setError("An unexpected error occurred");
@@ -115,7 +108,7 @@ export default function SignInPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <FieldGroup>
+          <FieldGroup className="gap-3">
             <Field>
               <Button
                 variant="outline"
@@ -153,25 +146,16 @@ export default function SignInPage() {
               name="email"
               control={form.control}
               render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel htmlFor="form-sign-in-email">Email</FieldLabel>
-                  <Input
-                    {...field}
-                    id="form-sign-in-email"
-                    aria-invalid={fieldState.invalid}
-                    type="email"
-                    placeholder="m@example.com"
-                    required
-                  />
-                  {fieldState.invalid && (
-                    <FieldError errors={[fieldState.error]} />
-                  )}
-                </Field>
+                <EmailField
+                  id="form-sign-in-email"
+                  field={field}
+                  fieldState={fieldState}
+                />
               )}
             />
           </FieldGroup>
           <form onSubmit={form.handleSubmit(onEmailLoginSubmit)}>
-            <FieldGroup>
+            <FieldGroup className="gap-3">
               <Controller
                 name="password"
                 control={form.control}
@@ -183,7 +167,7 @@ export default function SignInPage() {
                     fieldState={fieldState}
                     labelAddon={
                       <Link
-                        href="/auth/recovery"
+                        href={APP_CONFIG.routes.recovery}
                         className="ml-auto text-sm underline-offset-4 hover:underline"
                       >
                         Forgot your password?
@@ -206,8 +190,8 @@ export default function SignInPage() {
                   <Link
                     href={
                       redirectTo
-                        ? `/auth/sign-up?redirect=${encodeURIComponent(redirectTo)}`
-                        : "/auth/sign-up"
+                        ? `${APP_CONFIG.routes.signUp}?redirect=${encodeURIComponent(redirectTo)}`
+                        : APP_CONFIG.routes.signUp
                     }
                   >
                     Sign up
@@ -218,10 +202,7 @@ export default function SignInPage() {
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+      <AuthFormFooter />
     </div>
   );
 }

@@ -19,6 +19,7 @@ import {
 } from "@tabler/icons-react";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { APP_CONFIG } from "@/config";
 
 function getDeviceIcon(userAgent?: string | null) {
   if (!userAgent) return <IconDeviceDesktop className="h-5 w-5" />;
@@ -117,7 +118,7 @@ export default async function ViewSessions() {
             <p className="text-sm">No active sessions found.</p>
           </div>
         ) : (
-          <div className="space-y-4">
+          <div className="flex flex-col gap-3">
             {sortedSessions.map((session) => {
               const isCurrentSession =
                 session.token === currentSession?.session.token;
@@ -193,7 +194,7 @@ export default async function ViewSessions() {
                               },
                               headers: await headers(),
                             });
-                            revalidatePath("/dashboard/account");
+                            revalidatePath(APP_CONFIG.routes.accountSettings);
                           }}
                         >
                           Revoke session

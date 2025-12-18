@@ -21,24 +21,16 @@ import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
+import { createPasswordChangeSchema } from "@/lib/validation-schemas";
+import { TextField } from "@/components/ui/text-field";
+import { APP_CONFIG } from "@/config";
 
 interface ChangePasswordInterface {
   hasCredentialsAccount: boolean;
   email: string | undefined;
 }
 
-const changePasswordSchema = z
-  .object({
-    currentPassword: z.string().min(1, "Current password is required"),
-    newPassword: z
-      .string()
-      .min(8, "Password must be at least 8 characters long"),
-    confirmPassword: z.string().min(1, "Please confirm your password"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
+const changePasswordSchema = createPasswordChangeSchema();
 
 export default function ChangePassword(props: ChangePasswordInterface) {
   const [isLoadingChangeRequest, setIsLoadingChangeRequest] = useState(false);
@@ -88,100 +80,88 @@ export default function ChangePassword(props: ChangePasswordInterface) {
         <CardDescription>Update your account password</CardDescription>
       </CardHeader>
       <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {error && (
-            <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
-              {error}
-            </div>
-          )}
-          {success && (
-            <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600 dark:text-green-400">
-              {success}
-            </div>
-          )}
-
-          <Controller
-            name="currentPassword"
-            control={form.control}
-            render={({ field }) => (
-              <Field>
-                <FieldLabel>Current Password</FieldLabel>
-                <FieldGroup>
-                  <Input
-                    {...field}
-                    type="password"
-                    placeholder="Enter your current password"
-                    disabled={!props.hasCredentialsAccount}
-                  />
-                </FieldGroup>
-                <FieldError>
-                  {form.formState.errors.currentPassword?.message}
-                </FieldError>
-              </Field>
+        <form onSubmit={form.handleSubmit(onSubmit)}>
+          <FieldGroup className="gap-4">
+            {error && (
+              <div className="bg-destructive/15 text-destructive rounded-md p-3 text-sm">
+                {error}
+              </div>
             )}
-          />
-
-          <Controller
-            name="newPassword"
-            control={form.control}
-            render={({ field }) => (
-              <Field>
-                <FieldLabel>New Password</FieldLabel>
-                <FieldGroup>
-                  <Input
-                    {...field}
-                    type="password"
-                    placeholder="Enter your new password"
-                    disabled={!props.hasCredentialsAccount}
-                  />
-                </FieldGroup>
-                <FieldError>
-                  {form.formState.errors.newPassword?.message}
-                </FieldError>
-              </Field>
+            {success && (
+              <div className="rounded-md bg-green-500/15 p-3 text-sm text-green-600 dark:text-green-400">
+                {success}
+              </div>
             )}
-          />
 
-          <Controller
-            name="confirmPassword"
-            control={form.control}
-            render={({ field }) => (
-              <Field>
-                <FieldLabel>Confirm New Password</FieldLabel>
-                <FieldGroup>
-                  <Input
-                    {...field}
-                    type="password"
-                    placeholder="Confirm your new password"
-                    disabled={!props.hasCredentialsAccount}
-                  />
-                </FieldGroup>
-                <FieldError>
-                  {form.formState.errors.confirmPassword?.message}
-                </FieldError>
-              </Field>
+            <Controller
+              name="currentPassword"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Current Password"
+                  type="password"
+                  placeholder="Enter your current password"
+                  disabled={!props.hasCredentialsAccount}
+                  field={field}
+                  fieldState={fieldState}
+                />
+              )}
+            />
+
+            <Controller
+              name="newPassword"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="New Password"
+                  type="password"
+                  placeholder="Enter your new password"
+                  disabled={!props.hasCredentialsAccount}
+                  field={field}
+                  fieldState={fieldState}
+                />
+              )}
+            />
+
+            <Controller
+              name="confirmPassword"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <TextField
+                  label="Confirm New Password"
+                  type="password"
+                  placeholder="Confirm your new password"
+                  disabled={!props.hasCredentialsAccount}
+                  field={field}
+                  fieldState={fieldState}
+                />
+              )}
+            />
+
+            <Field>
+              <div>
+                <Button
+                  type="submit"
+                  disabled={isLoadingChangeRequest || !props.hasCredentialsAccount}
+                >
+                  {isLoadingChangeRequest ? "Updating..." : "Update Password"}
+                </Button>
+              </div>
+            </Field>
+
+            {!props.hasCredentialsAccount && (
+              <p className="text-muted-foreground text-sm">
+                You do not have a credentials account set up.{" "}
+                <Link
+                  href={`${APP_CONFIG.routes.recovery}?email=${encodeURIComponent(props.email ?? "")}`}
+                  className="text-blue-600 underline hover:text-blue-700 dark:text-blue-400"
+                >
+                  Set a password
+                </Link>{" "}
+                for your account.
+              </p>
             )}
-          />
-
-          <Button
-            type="submit"
-            disabled={isLoadingChangeRequest || !props.hasCredentialsAccount}
-          >
-            {isLoadingChangeRequest ? "Updating..." : "Update Password"}
-          </Button>
-
-          {!props.hasCredentialsAccount && (
-            <p className="text-muted-foreground text-sm">
-              You do not have a credentials account set up.{" "}
-              <Link
-                href={`/auth/recovery?email=${encodeURIComponent(props.email ?? "")}`}
-                className="text-blue-600 underline hover:text-blue-700 dark:text-blue-400"
-              >
-                Set a password
-              </Link>{" "}
-              for your account.
-            </p>
-          )}
+          </FieldGroup>
         </form>
       </CardContent>
     </Card>

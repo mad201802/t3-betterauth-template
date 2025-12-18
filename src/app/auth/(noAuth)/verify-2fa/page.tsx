@@ -28,6 +28,7 @@ import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
 import { toast } from "sonner";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
+import { APP_CONFIG } from "@/config";
 
 export default function Verify2FAPage() {
   const router = useRouter();
@@ -63,7 +64,7 @@ export default function Verify2FAPage() {
         toast.error(error.message ?? "Failed to verify code");
       } else {
         toast.success("2FA verified successfully");
-        router.push(redirectTo ?? "/dashboard");
+        router.push(redirectTo ?? APP_CONFIG.routes.dashboard);
       }
     } catch (err) {
       console.error("2FA verification error:", err);

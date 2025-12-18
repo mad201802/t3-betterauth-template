@@ -24,9 +24,13 @@ import { useState, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
+import { emailSchema } from "@/lib/validation-schemas";
+import { EmailField } from "@/components/ui/text-field";
+import { AuthFormFooter } from "@/components/auth-form-footer";
+import { APP_CONFIG } from "@/config";
 
 const recoveryFormSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  email: emailSchema,
 });
 
 export default function RecoveryPage() {
@@ -100,22 +104,11 @@ export default function RecoveryPage() {
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-recovery-email">
-                      Email
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-recovery-email"
-                      aria-invalid={fieldState.invalid}
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
+                  <EmailField
+                    id="form-recovery-email"
+                    field={field}
+                    fieldState={fieldState}
+                  />
                 )}
               />
               {error && (
@@ -136,17 +129,14 @@ export default function RecoveryPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Can you remember your password?{" "}
-                  <Link href="/auth/sign-in">Sign in</Link>
+                  <Link href={APP_CONFIG.routes.signIn}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+      <AuthFormFooter />
     </div>
   );
 }

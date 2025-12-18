@@ -1,6 +1,7 @@
 import { Eye, EyeOff } from "lucide-react";
 import {
   Field,
+  FieldError,
   FieldLabel,
 } from "@/components/ui/field";
 import type { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
@@ -47,6 +48,9 @@ export default function PasswordInputField({ label, id, field, fieldState, label
           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </Button>
       </div>
+      {fieldState.invalid && (
+        <FieldError errors={[fieldState.error]} />
+      )}
     </Field>
   );
 }

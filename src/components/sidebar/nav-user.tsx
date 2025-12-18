@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sidebar";
 import { authClient } from "@/server/better-auth/client";
 import Link from "next/link";
+import { APP_CONFIG } from "@/config";
 
 export function NavUser({
   user,
@@ -99,7 +100,7 @@ export function NavUser({
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem asChild>
-                <Link href="/dashboard/account">
+                <Link href={APP_CONFIG.routes.accountSettings}>
                   <IconUserCircle />
                   Account
                 </Link>

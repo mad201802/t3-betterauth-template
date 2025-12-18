@@ -3,6 +3,40 @@ export const APP_CONFIG = {
     applicationName: "BetterAuth Template",
     applicationShortName: "BetterAuth",
   },
+  routes: {
+    // Public routes
+    home: "/",
+    
+    // Auth routes
+    signIn: "/auth/sign-in",
+    signUp: "/auth/sign-up",
+    recovery: "/auth/recovery",
+    resetPassword: "/auth/reset-password",
+    verify2FA: "/auth/verify-2fa",
+    
+    // Protected routes
+    dashboard: "/dashboard",
+    accountSettings: "/dashboard/account",
+  },
+  auth: {
+    // Default redirect after successful auth
+    defaultRedirectAfterAuth: "/dashboard",
+    
+    // Password requirements
+    passwordMinLength: 8,
+    
+    // Email requirements (RFC 5321)
+    emailMinLength: 5,
+    emailMaxLength: 254,
+  },
+  ui: {
+    // QR code size for 2FA
+    qrCodeSize: 200,
+  },
+  links: {
+    termsOfService: "#",
+    privacyPolicy: "#",
+  },
   email: {
     fromAddress: "Acme <onboarding@resend.dev>",
     resetPasswordMailBody: ({ user, url }: { user: string; url: string }) => `

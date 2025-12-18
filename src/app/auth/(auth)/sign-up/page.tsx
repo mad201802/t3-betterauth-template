@@ -25,22 +25,17 @@ import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
 import PasswordInputField from "@/components/ui/password-input";
+import { emailSchema, passwordSchema } from "@/lib/validation-schemas";
+import { EmailField, TextField } from "@/components/ui/text-field";
+import { AuthFormFooter } from "@/components/auth-form-footer";
+import { APP_CONFIG } from "@/config";
 
 const signUpFormSchema = z
   .object({
     name: z.string().min(2).max(50),
-    email: z
-      .email("Invalid email address")
-      .min(5)
-      .max(254) // RFC 5321
-      .toLowerCase()
-      .trim()
-      .regex(
-        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-        "Invalid email format",
-      ),
-    password: z.string().min(8, "Password must be at least 8 characters long"),
-    confirmPassword: z.string().min(8),
+    email: emailSchema,
+    password: passwordSchema,
+    confirmPassword: z.string().min(APP_CONFIG.auth.passwordMinLength),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords don't match",
@@ -74,7 +69,7 @@ export default function SignInPage() {
           email: data.email,
           password: data.password,
           name: data.name,
-          callbackURL: redirectTo ?? "/dashboard",
+          callbackURL: redirectTo ?? APP_CONFIG.routes.dashboard,
         },
         {
           onError: (ctx) => {
@@ -116,7 +111,7 @@ export default function SignInPage() {
               </p>
               <div className="flex justify-center">
                 <Button asChild variant="outline">
-                  <Link href="/auth/sign-in">Go to Sign In</Link>
+                  <Link href={APP_CONFIG.routes.signIn}>Go to Sign In</Link>
                 </Button>
               </div>
             </div>
@@ -127,7 +122,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className="flex flex-col">
+    <div className={cn("flex flex-col gap-4")}>
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create your account</CardTitle>
@@ -137,79 +132,56 @@ export default function SignInPage() {
         </CardHeader>
         <CardContent>
           <form id="form-sign-up" onSubmit={form.handleSubmit(onSubmit)}>
-            <FieldGroup>
+            <FieldGroup className="gap-3">
               <Controller
                 name="name"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-sign-up-name">
-                      Full Name
-                    </FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-sign-up-name"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="John Doe"
-                      autoComplete="off"
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
+                  <TextField
+                    label="Full Name"
+                    id="form-sign-up-name"
+                    placeholder="John Doe"
+                    autoComplete="off"
+                    field={field}
+                    fieldState={fieldState}
+                  />
                 )}
               />
               <Controller
                 name="email"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor="form-sign-up-email">Email</FieldLabel>
-                    <Input
-                      {...field}
-                      id="form-sign-up-email"
-                      aria-invalid={fieldState.invalid}
-                      placeholder="m@example.com"
-                      type="email"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
+                  <EmailField
+                    id="form-sign-up-email"
+                    field={field}
+                    fieldState={fieldState}
+                  />
                 )}
               />
-              <Field className="grid grid-cols-2 gap-4">
-                <Controller
-                  name="password"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <PasswordInputField
-                      label="Password"
-                      id="form-sign-up-password"
-                      field={field}
-                      fieldState={fieldState}
-                    />
-                  )}
-                />
-                <Controller
-                  name="confirmPassword"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <PasswordInputField
-                      label="Confirm Password"
-                      id="form-sign-up-confirm-password"
-                      field={field}
-                      fieldState={fieldState}
-                    />
-                  )}
-                />
-                {(form.formState.errors.password ?? form.formState.errors.confirmPassword) !== undefined && (
-                  <div className="col-span-2">
-                    <FieldError errors={[form.formState.errors.password, form.formState.errors.confirmPassword].filter(Boolean)} />
-                  </div>
+              <Controller
+                name="password"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <PasswordInputField
+                    label="Password"
+                    id="form-sign-up-password"
+                    field={field}
+                    fieldState={fieldState}
+                  />
                 )}
-              </Field>
+              />
+              <Controller
+                name="confirmPassword"
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <PasswordInputField
+                    label="Confirm Password"
+                    id="form-sign-up-confirm-password"
+                    field={field}
+                    fieldState={fieldState}
+                  />
+                )}
+              />
               <Field>
                 <FieldDescription>
                   Must be at least 8 characters long.
@@ -229,8 +201,8 @@ export default function SignInPage() {
                   <Link
                     href={
                       redirectTo
-                        ? `/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}`
-                        : "/auth/sign-in"
+                        ? `${APP_CONFIG.routes.signIn}?redirect=${encodeURIComponent(redirectTo)}`
+                        : APP_CONFIG.routes.signIn
                     }
                   >
                     Sign in
@@ -241,10 +213,7 @@ export default function SignInPage() {
           </form>
         </CardContent>
       </Card>
-      <FieldDescription className="px-6 text-center">
-        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
-        and <a href="#">Privacy Policy</a>.
-      </FieldDescription>
+      <AuthFormFooter />
     </div>
   );
 }

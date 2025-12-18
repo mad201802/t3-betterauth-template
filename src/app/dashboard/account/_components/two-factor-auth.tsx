@@ -24,9 +24,11 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Badge } from "@/components/ui/badge";
+import { passwordSchema } from "@/lib/validation-schemas";
+import { APP_CONFIG } from "@/config";
 
-const passwordSchema = z.object({
-  password: z.string().min(8, "Password must be at least 8 characters long"),
+const passwordFormSchema = z.object({
+  password: passwordSchema,
 });
 
 const verifyCodeSchema = z.object({
@@ -48,8 +50,8 @@ export default function TwoFactorAuth({
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
-  const passwordForm = useForm<z.infer<typeof passwordSchema>>({
-    resolver: zodResolver(passwordSchema),
+  const passwordForm = useForm<z.infer<typeof passwordFormSchema>>({
+    resolver: zodResolver(passwordFormSchema),
     defaultValues: {
       password: "",
     },
@@ -62,7 +64,7 @@ export default function TwoFactorAuth({
     },
   });
 
-  const handleEnable2FA = async (data: z.infer<typeof passwordSchema>) => {
+  const handleEnable2FA = async (data: z.infer<typeof passwordFormSchema>) => {
     setIsLoading(true);
     try {
       const { data: result, error } = await authClient.twoFactor.enable({
@@ -115,7 +117,7 @@ export default function TwoFactorAuth({
     }
   };
 
-  const handleDisable2FA = async (data: z.infer<typeof passwordSchema>) => {
+  const handleDisable2FA = async (data: z.infer<typeof passwordFormSchema>) => {
     setIsLoading(true);
     try {
       const { error } = await authClient.twoFactor.disable({
@@ -138,7 +140,7 @@ export default function TwoFactorAuth({
     }
   };
 
-  const handleGenerateBackupCodes = async (data: z.infer<typeof passwordSchema>) => {
+  const handleGenerateBackupCodes = async (data: z.infer<typeof passwordFormSchema>) => {
     setIsLoading(true);
     try {
       const { data: result, error } = await authClient.twoFactor.generateBackupCodes({
@@ -208,8 +210,8 @@ export default function TwoFactorAuth({
       <CardContent>
         {!twoFactorEnabled && !isEnabling && (
           <form onSubmit={passwordForm.handleSubmit(handleEnable2FA)}>
-            <Field>
-              <FieldGroup>
+            <FieldGroup className="gap-4">
+              <Field>
                 <FieldLabel htmlFor="enable-password">Password</FieldLabel>
                 <Input
                   id="enable-password"
@@ -221,33 +223,37 @@ export default function TwoFactorAuth({
                 <FieldDescription>
                   Enter your password to enable two-factor authentication
                 </FieldDescription>
-              </FieldGroup>
-            </Field>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? "Enabling..." : "Enable 2FA"}
-            </Button>
+              </Field>
+              <Field>
+                <div>
+                  <Button type="submit" disabled={isLoading}>
+                    {isLoading ? "Enabling..." : "Enable 2FA"}
+                  </Button>
+                </div>
+              </Field>
+            </FieldGroup>
           </form>
         )}
 
         {isEnabling && totpUri && (
-          <div className="space-y-2">
-            <div className="space-y-2">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <h4 className="font-medium">1. Scan QR Code</h4>
               <p className="text-sm text-muted-foreground">
                 Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
               </p>
               <div className="flex justify-center p-2 bg-white rounded-lg">
-                <QRCode value={totpUri} size={200} />
+                <QRCode value={totpUri} size={APP_CONFIG.ui.qrCodeSize} />
               </div>
             </div>
 
             {backupCodes && (
-              <div className="space-y-2">
+              <div className="flex flex-col gap-2">
                 <h4 className="font-medium">2. Save Backup Codes</h4>
                 <p className="text-sm text-muted-foreground">
                   Store these backup codes in a safe place. You can use them to access your account if you lose your device.
                 </p>
-                <div className="bg-muted p-2 rounded-lg space-y-2">
+                <div className="bg-muted p-2 rounded-lg flex flex-col gap-2">
                   <div className="grid grid-cols-2 gap-2 font-mono text-sm">
                     {backupCodes.map((code, index) => (
                       <div key={index}>{code}</div>
@@ -265,14 +271,14 @@ export default function TwoFactorAuth({
               </div>
             )}
 
-            <div className="space-y-2">
+            <div className="flex flex-col gap-2">
               <h4 className="font-medium">3. Verify Code</h4>
               <p className="text-sm text-muted-foreground">
                 Enter the 6-digit code from your authenticator app to complete setup
               </p>
-              <form onSubmit={verifyForm.handleSubmit(handleVerifyCode)} className="space-y-2">
-                <Field>
-                  <FieldGroup>
+              <form onSubmit={verifyForm.handleSubmit(handleVerifyCode)}>
+                <FieldGroup className="gap-4">
+                  <Field>
                     <Input
                       type="text"
                       placeholder="000000"
@@ -280,57 +286,61 @@ export default function TwoFactorAuth({
                       {...verifyForm.register("code")}
                     />
                     <FieldError>{verifyForm.formState.errors.code?.message}</FieldError>
-                  </FieldGroup>
-                </Field>
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={isLoading}>
-                    {isLoading ? "Verifying..." : "Verify & Enable"}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={() => {
-                      setIsEnabling(false);
-                      setTotpUri(null);
-                      setBackupCodes(null);
-                      passwordForm.reset();
-                    }}
-                  >
-                    Cancel
-                  </Button>
-                </div>
+                  </Field>
+                  <div className="flex gap-2">
+                    <Button type="submit" disabled={isLoading}>
+                      {isLoading ? "Verifying..." : "Verify & Enable"}
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => {
+                        setIsEnabling(false);
+                        setTotpUri(null);
+                        setBackupCodes(null);
+                        passwordForm.reset();
+                      }}
+                    >
+                      Cancel
+                    </Button>
+                  </div>
+                </FieldGroup>
               </form>
             </div>
           </div>
         )}
 
         {twoFactorEnabled && (
-          <div className="space-y-2">
-            <div className="space-y-2">
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <h4 className="font-medium">Generate New Backup Codes</h4>
               <p className="text-sm text-muted-foreground">
                 Generate new backup codes. This will invalidate your old backup codes.
               </p>
-              <form onSubmit={passwordForm.handleSubmit(handleGenerateBackupCodes)} className="space-y-2">
-                <Field>
-                  <FieldGroup>
+              <form onSubmit={passwordForm.handleSubmit(handleGenerateBackupCodes)}>
+                <FieldGroup className="gap-4">
+                  <Field>
                     <Input
                       type="password"
                       placeholder="Enter your password"
                       {...passwordForm.register("password")}
                     />
                     <FieldError>{passwordForm.formState.errors.password?.message}</FieldError>
-                  </FieldGroup>
-                </Field>
-                <Button type="submit" variant="outline" disabled={isLoading}>
-                  {isLoading ? "Generating..." : "Generate New Backup Codes"}
-                </Button>
+                  </Field>
+                  <Field>
+                    <div>
+                      <Button type="submit" variant="outline" disabled={isLoading}>
+                        {isLoading ? "Generating..." : "Generate New Backup Codes"}
+                      </Button>
+                    </div>
+                  </Field>
+                </FieldGroup>
               </form>
 
               {backupCodes && (
-                <div className="space-y-2 mt-2">
+                <div className="flex flex-col gap-2 mt-2">
                   <p className="text-sm font-medium">Your new backup codes:</p>
-                  <div className="bg-muted p-2 rounded-lg space-y-2">
+                  <div className="bg-muted p-2 rounded-lg flex flex-col gap-2">
                     <div className="grid grid-cols-2 gap-2 font-mono text-sm">
                       {backupCodes.map((code, index) => (
                         <div key={index}>{code}</div>
@@ -349,25 +359,29 @@ export default function TwoFactorAuth({
               )}
             </div>
 
-            <div className="pt-2 border-t">
-              <h4 className="font-medium mb-2">Disable Two-Factor Authentication</h4>
-              <p className="text-sm text-muted-foreground mb-2">
+            <div className="pt-2 border-t flex flex-col gap-2">
+              <h4 className="font-medium">Disable Two-Factor Authentication</h4>
+              <p className="text-sm text-muted-foreground">
                 This will remove the extra security layer from your account.
               </p>
-              <form onSubmit={passwordForm.handleSubmit(handleDisable2FA)} className="space-y-2">
-                <Field>
-                  <FieldGroup>
+              <form onSubmit={passwordForm.handleSubmit(handleDisable2FA)}>
+                <FieldGroup className="gap-4">
+                  <Field>
                     <Input
                       type="password"
                       placeholder="Enter your password"
                       {...passwordForm.register("password")}
                     />
                     <FieldError>{passwordForm.formState.errors.password?.message}</FieldError>
-                  </FieldGroup>
-                </Field>
-                <Button type="submit" variant="destructive" disabled={isLoading}>
-                  {isLoading ? "Disabling..." : "Disable 2FA"}
-                </Button>
+                  </Field>
+                  <Field>
+                    <div>
+                      <Button type="submit" variant="destructive" disabled={isLoading}>
+                        {isLoading ? "Disabling..." : "Disable 2FA"}
+                      </Button>
+                    </div>
+                  </Field>
+                </FieldGroup>
               </form>
             </div>
           </div>
