@@ -20,8 +20,9 @@ import {
 } from "@/components/ui/card";
 import PasswordInputField from "@/components/ui/password-input";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
@@ -48,6 +49,15 @@ export default function SignInPage() {
       password: "",
     },
   });
+
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("reset") === "success") {
+      console.log("Password reset successful");
+      toast.success("Password reset successfully!");
+    }
+  }, [searchParams]);
 
   const onEmailLoginSubmit = async (data: z.infer<typeof signInFormSchema>) => {
     setIsLoading(true);
@@ -100,6 +110,7 @@ export default function SignInPage() {
 
   return (
     <div className={cn("flex flex-col gap-4")}>
+
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Welcome back</CardTitle>
