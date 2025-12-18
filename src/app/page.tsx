@@ -46,6 +46,11 @@ export default async function Home() {
               <p className="text-center text-2xl text-white">
                 {session && <span>Logged in as {session.user?.name}</span>}
               </p>
+              {session && (
+                <Button asChild>
+                  <Link href="/dashboard">Go to Dashboard</Link>
+                </Button>
+              )}
               {!session && (
                 <Button asChild>
                   <Link href="/auth/sign-up">Sign up</Link>

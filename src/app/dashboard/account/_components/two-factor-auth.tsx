@@ -39,9 +39,10 @@ interface TwoFactorAuthProps {
 }
 
 export default function TwoFactorAuth({
-  twoFactorEnabled,
+  twoFactorEnabled: initialTwoFactorEnabled,
   hasCredentialsAccount,
 }: TwoFactorAuthProps) {
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(initialTwoFactorEnabled);
   const [isEnabling, setIsEnabling] = useState(false);
   const [totpUri, setTotpUri] = useState<string | null>(null);
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
@@ -100,7 +101,12 @@ export default function TwoFactorAuth({
       }
 
       toast.success("2FA enabled successfully!");
-      window.location.reload();
+      setTwoFactorEnabled(true);
+      setIsEnabling(false);
+      setTotpUri(null);
+      setBackupCodes(null);
+      verifyForm.reset();
+      passwordForm.reset();
     } catch (err) {
       console.error("Verify code error:", err);
       toast.error("An unexpected error occurred");
@@ -122,7 +128,8 @@ export default function TwoFactorAuth({
       }
 
       toast.success("2FA disabled successfully");
-      window.location.reload();
+      setTwoFactorEnabled(false);
+      passwordForm.reset();
     } catch (err) {
       console.error("Disable 2FA error:", err);
       toast.error("An unexpected error occurred");
