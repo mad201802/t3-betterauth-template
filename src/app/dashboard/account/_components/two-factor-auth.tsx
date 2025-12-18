@@ -198,9 +198,9 @@ export default function TwoFactorAuth({
           )}
         </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent>
         {!twoFactorEnabled && !isEnabling && (
-          <form onSubmit={passwordForm.handleSubmit(handleEnable2FA)} className="space-y-4">
+          <form onSubmit={passwordForm.handleSubmit(handleEnable2FA)}>
             <Field>
               <FieldGroup>
                 <FieldLabel htmlFor="enable-password">Password</FieldLabel>
@@ -223,13 +223,13 @@ export default function TwoFactorAuth({
         )}
 
         {isEnabling && totpUri && (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="space-y-2">
               <h4 className="font-medium">1. Scan QR Code</h4>
               <p className="text-sm text-muted-foreground">
                 Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
               </p>
-              <div className="flex justify-center p-4 bg-white rounded-lg">
+              <div className="flex justify-center p-2 bg-white rounded-lg">
                 <QRCode value={totpUri} size={200} />
               </div>
             </div>
@@ -240,7 +240,7 @@ export default function TwoFactorAuth({
                 <p className="text-sm text-muted-foreground">
                   Store these backup codes in a safe place. You can use them to access your account if you lose your device.
                 </p>
-                <div className="bg-muted p-4 rounded-lg space-y-2">
+                <div className="bg-muted p-2 rounded-lg space-y-2">
                   <div className="grid grid-cols-2 gap-2 font-mono text-sm">
                     {backupCodes.map((code, index) => (
                       <div key={index}>{code}</div>
@@ -263,7 +263,7 @@ export default function TwoFactorAuth({
               <p className="text-sm text-muted-foreground">
                 Enter the 6-digit code from your authenticator app to complete setup
               </p>
-              <form onSubmit={verifyForm.handleSubmit(handleVerifyCode)} className="space-y-4">
+              <form onSubmit={verifyForm.handleSubmit(handleVerifyCode)} className="space-y-2">
                 <Field>
                   <FieldGroup>
                     <Input
@@ -298,13 +298,13 @@ export default function TwoFactorAuth({
         )}
 
         {twoFactorEnabled && (
-          <div className="space-y-4">
+          <div className="space-y-2">
             <div className="space-y-2">
               <h4 className="font-medium">Generate New Backup Codes</h4>
               <p className="text-sm text-muted-foreground">
                 Generate new backup codes. This will invalidate your old backup codes.
               </p>
-              <form onSubmit={passwordForm.handleSubmit(handleGenerateBackupCodes)} className="space-y-4">
+              <form onSubmit={passwordForm.handleSubmit(handleGenerateBackupCodes)} className="space-y-2">
                 <Field>
                   <FieldGroup>
                     <Input
@@ -321,9 +321,9 @@ export default function TwoFactorAuth({
               </form>
 
               {backupCodes && (
-                <div className="space-y-2 mt-4">
+                <div className="space-y-2 mt-2">
                   <p className="text-sm font-medium">Your new backup codes:</p>
-                  <div className="bg-muted p-4 rounded-lg space-y-2">
+                  <div className="bg-muted p-2 rounded-lg space-y-2">
                     <div className="grid grid-cols-2 gap-2 font-mono text-sm">
                       {backupCodes.map((code, index) => (
                         <div key={index}>{code}</div>
@@ -342,12 +342,12 @@ export default function TwoFactorAuth({
               )}
             </div>
 
-            <div className="pt-4 border-t">
+            <div className="pt-2 border-t">
               <h4 className="font-medium mb-2">Disable Two-Factor Authentication</h4>
-              <p className="text-sm text-muted-foreground mb-4">
+              <p className="text-sm text-muted-foreground mb-2">
                 This will remove the extra security layer from your account.
               </p>
-              <form onSubmit={passwordForm.handleSubmit(handleDisable2FA)} className="space-y-4">
+              <form onSubmit={passwordForm.handleSubmit(handleDisable2FA)} className="space-y-2">
                 <Field>
                   <FieldGroup>
                     <Input

@@ -20,6 +20,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import PasswordInputField from "@/components/ui/password-input";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -175,29 +176,20 @@ export default function SignInPage() {
                 name="password"
                 control={form.control}
                 render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <div className="flex items-center">
-                      <FieldLabel htmlFor="form-sign-in-password">
-                        Password
-                      </FieldLabel>
+                  <PasswordInputField
+                    label="Password"
+                    id="form-sign-in-password"
+                    field={field}
+                    fieldState={fieldState}
+                    labelAddon={
                       <Link
                         href="/auth/recovery"
                         className="ml-auto text-sm underline-offset-4 hover:underline"
                       >
                         Forgot your password?
                       </Link>
-                    </div>
-                    <Input
-                      {...field}
-                      id="form-sign-in-password"
-                      aria-invalid={fieldState.invalid}
-                      type="password"
-                      required
-                    />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
+                    }
+                  />
                 )}
               />
               {error && (

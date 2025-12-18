@@ -24,6 +24,7 @@ import { useState } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
+import PasswordInputField from "@/components/ui/password-input";
 
 const signUpFormSchema = z
   .object({
@@ -126,7 +127,7 @@ export default function SignInPage() {
   }
 
   return (
-    <div className={cn("flex flex-col gap-6")}>
+    <div className="flex flex-col">
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Create your account</CardTitle>
@@ -183,44 +184,31 @@ export default function SignInPage() {
                   name="password"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="form-sign-up-password">
-                        Password
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        id="form-sign-up-password"
-                        aria-invalid={fieldState.invalid}
-                        type="password"
-                        required
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
+                    <PasswordInputField
+                      label="Password"
+                      id="form-sign-up-password"
+                      field={field}
+                      fieldState={fieldState}
+                    />
                   )}
                 />
                 <Controller
                   name="confirmPassword"
                   control={form.control}
                   render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor="form-sign-up-confirm-password">
-                        Confirm Password
-                      </FieldLabel>
-                      <Input
-                        {...field}
-                        id="form-sign-up-confirm-password"
-                        aria-invalid={fieldState.invalid}
-                        type="password"
-                        required
-                      />
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
+                    <PasswordInputField
+                      label="Confirm Password"
+                      id="form-sign-up-confirm-password"
+                      field={field}
+                      fieldState={fieldState}
+                    />
                   )}
                 />
+                {(form.formState.errors.password ?? form.formState.errors.confirmPassword) !== undefined && (
+                  <div className="col-span-2">
+                    <FieldError errors={[form.formState.errors.password, form.formState.errors.confirmPassword].filter(Boolean)} />
+                  </div>
+                )}
               </Field>
               <Field>
                 <FieldDescription>
