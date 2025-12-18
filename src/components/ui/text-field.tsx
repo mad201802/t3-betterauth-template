@@ -1,4 +1,7 @@
-import type { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
+import type {
+  ControllerFieldState,
+  ControllerRenderProps,
+} from "react-hook-form";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
@@ -59,7 +62,12 @@ interface EmailFieldProps {
 /**
  * Specialized email input field
  */
-export function EmailField({ id, disabled, field, fieldState }: EmailFieldProps) {
+export function EmailField({
+  id,
+  disabled,
+  field,
+  fieldState,
+}: EmailFieldProps) {
   return (
     <TextField
       label="Email"

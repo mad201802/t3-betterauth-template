@@ -6,14 +6,14 @@ export const APP_CONFIG = {
   routes: {
     // Public routes
     home: "/",
-    
+
     // Auth routes
     signIn: "/auth/sign-in",
     signUp: "/auth/sign-up",
     recovery: "/auth/recovery",
     resetPassword: "/auth/reset-password",
     verify2FA: "/auth/verify-2fa",
-    
+
     // Protected routes
     dashboard: "/dashboard",
     accountSettings: "/dashboard/account",
@@ -21,10 +21,10 @@ export const APP_CONFIG = {
   auth: {
     // Default redirect after successful auth
     defaultRedirectAfterAuth: "/dashboard",
-    
+
     // Password requirements
     passwordMinLength: 8,
-    
+
     // Email requirements (RFC 5321)
     emailMinLength: 5,
     emailMaxLength: 254,

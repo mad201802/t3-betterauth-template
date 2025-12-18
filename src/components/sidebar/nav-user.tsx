@@ -29,7 +29,7 @@ import Link from "next/link";
 import { APP_CONFIG } from "@/config";
 
 export function NavUser({
-  user,
+  user: _user,
 }: {
   user: {
     name: string;

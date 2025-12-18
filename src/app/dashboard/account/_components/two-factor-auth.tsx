@@ -32,7 +32,10 @@ const passwordFormSchema = z.object({
 });
 
 const verifyCodeSchema = z.object({
-  code: z.string().min(6, "Code must be 6 characters").max(6, "Code must be 6 characters"),
+  code: z
+    .string()
+    .min(6, "Code must be 6 characters")
+    .max(6, "Code must be 6 characters"),
 });
 
 interface TwoFactorAuthProps {
@@ -44,7 +47,9 @@ export default function TwoFactorAuth({
   twoFactorEnabled: initialTwoFactorEnabled,
   hasCredentialsAccount,
 }: TwoFactorAuthProps) {
-  const [twoFactorEnabled, setTwoFactorEnabled] = useState(initialTwoFactorEnabled);
+  const [twoFactorEnabled, setTwoFactorEnabled] = useState(
+    initialTwoFactorEnabled,
+  );
   const [isEnabling, setIsEnabling] = useState(false);
   const [totpUri, setTotpUri] = useState<string | null>(null);
   const [backupCodes, setBackupCodes] = useState<string[] | null>(null);
@@ -140,12 +145,15 @@ export default function TwoFactorAuth({
     }
   };
 
-  const handleGenerateBackupCodes = async (data: z.infer<typeof passwordFormSchema>) => {
+  const handleGenerateBackupCodes = async (
+    data: z.infer<typeof passwordFormSchema>,
+  ) => {
     setIsLoading(true);
     try {
-      const { data: result, error } = await authClient.twoFactor.generateBackupCodes({
-        password: data.password,
-      });
+      const { data: result, error } =
+        await authClient.twoFactor.generateBackupCodes({
+          password: data.password,
+        });
 
       if (error) {
         toast.error(error.message ?? "Failed to generate backup codes");
@@ -181,9 +189,9 @@ export default function TwoFactorAuth({
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <p className="text-sm text-muted-foreground">
-            Two-factor authentication is only available for accounts with email/password login.
-            Please add a password to your account first.
+          <p className="text-muted-foreground text-sm">
+            Two-factor authentication is only available for accounts with
+            email/password login. Please add a password to your account first.
           </p>
         </CardContent>
       </Card>
@@ -219,7 +227,9 @@ export default function TwoFactorAuth({
                   placeholder="Enter your password"
                   {...passwordForm.register("password")}
                 />
-                <FieldError>{passwordForm.formState.errors.password?.message}</FieldError>
+                <FieldError>
+                  {passwordForm.formState.errors.password?.message}
+                </FieldError>
                 <FieldDescription>
                   Enter your password to enable two-factor authentication
                 </FieldDescription>
@@ -239,10 +249,11 @@ export default function TwoFactorAuth({
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <h4 className="font-medium">1. Scan QR Code</h4>
-              <p className="text-sm text-muted-foreground">
-                Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)
+              <p className="text-muted-foreground text-sm">
+                Scan this QR code with your authenticator app (Google
+                Authenticator, Authy, etc.)
               </p>
-              <div className="flex justify-center p-2 bg-white rounded-lg">
+              <div className="flex justify-center rounded-lg bg-white p-2">
                 <QRCode value={totpUri} size={APP_CONFIG.ui.qrCodeSize} />
               </div>
             </div>
@@ -250,10 +261,11 @@ export default function TwoFactorAuth({
             {backupCodes && (
               <div className="flex flex-col gap-2">
                 <h4 className="font-medium">2. Save Backup Codes</h4>
-                <p className="text-sm text-muted-foreground">
-                  Store these backup codes in a safe place. You can use them to access your account if you lose your device.
+                <p className="text-muted-foreground text-sm">
+                  Store these backup codes in a safe place. You can use them to
+                  access your account if you lose your device.
                 </p>
-                <div className="bg-muted p-2 rounded-lg flex flex-col gap-2">
+                <div className="bg-muted flex flex-col gap-2 rounded-lg p-2">
                   <div className="grid grid-cols-2 gap-2 font-mono text-sm">
                     {backupCodes.map((code, index) => (
                       <div key={index}>{code}</div>
@@ -273,8 +285,9 @@ export default function TwoFactorAuth({
 
             <div className="flex flex-col gap-2">
               <h4 className="font-medium">3. Verify Code</h4>
-              <p className="text-sm text-muted-foreground">
-                Enter the 6-digit code from your authenticator app to complete setup
+              <p className="text-muted-foreground text-sm">
+                Enter the 6-digit code from your authenticator app to complete
+                setup
               </p>
               <form onSubmit={verifyForm.handleSubmit(handleVerifyCode)}>
                 <FieldGroup className="gap-4">
@@ -285,7 +298,9 @@ export default function TwoFactorAuth({
                       maxLength={6}
                       {...verifyForm.register("code")}
                     />
-                    <FieldError>{verifyForm.formState.errors.code?.message}</FieldError>
+                    <FieldError>
+                      {verifyForm.formState.errors.code?.message}
+                    </FieldError>
                   </Field>
                   <div className="flex gap-2">
                     <Button type="submit" disabled={isLoading}>
@@ -314,10 +329,13 @@ export default function TwoFactorAuth({
           <div className="flex flex-col gap-3">
             <div className="flex flex-col gap-2">
               <h4 className="font-medium">Generate New Backup Codes</h4>
-              <p className="text-sm text-muted-foreground">
-                Generate new backup codes. This will invalidate your old backup codes.
+              <p className="text-muted-foreground text-sm">
+                Generate new backup codes. This will invalidate your old backup
+                codes.
               </p>
-              <form onSubmit={passwordForm.handleSubmit(handleGenerateBackupCodes)}>
+              <form
+                onSubmit={passwordForm.handleSubmit(handleGenerateBackupCodes)}
+              >
                 <FieldGroup className="gap-4">
                   <Field>
                     <Input
@@ -325,12 +343,20 @@ export default function TwoFactorAuth({
                       placeholder="Enter your password"
                       {...passwordForm.register("password")}
                     />
-                    <FieldError>{passwordForm.formState.errors.password?.message}</FieldError>
+                    <FieldError>
+                      {passwordForm.formState.errors.password?.message}
+                    </FieldError>
                   </Field>
                   <Field>
                     <div>
-                      <Button type="submit" variant="outline" disabled={isLoading}>
-                        {isLoading ? "Generating..." : "Generate New Backup Codes"}
+                      <Button
+                        type="submit"
+                        variant="outline"
+                        disabled={isLoading}
+                      >
+                        {isLoading
+                          ? "Generating..."
+                          : "Generate New Backup Codes"}
                       </Button>
                     </div>
                   </Field>
@@ -338,9 +364,9 @@ export default function TwoFactorAuth({
               </form>
 
               {backupCodes && (
-                <div className="flex flex-col gap-2 mt-2">
+                <div className="mt-2 flex flex-col gap-2">
                   <p className="text-sm font-medium">Your new backup codes:</p>
-                  <div className="bg-muted p-2 rounded-lg flex flex-col gap-2">
+                  <div className="bg-muted flex flex-col gap-2 rounded-lg p-2">
                     <div className="grid grid-cols-2 gap-2 font-mono text-sm">
                       {backupCodes.map((code, index) => (
                         <div key={index}>{code}</div>
@@ -359,9 +385,9 @@ export default function TwoFactorAuth({
               )}
             </div>
 
-            <div className="pt-2 border-t flex flex-col gap-2">
+            <div className="flex flex-col gap-2 border-t pt-2">
               <h4 className="font-medium">Disable Two-Factor Authentication</h4>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-muted-foreground text-sm">
                 This will remove the extra security layer from your account.
               </p>
               <form onSubmit={passwordForm.handleSubmit(handleDisable2FA)}>
@@ -372,11 +398,17 @@ export default function TwoFactorAuth({
                       placeholder="Enter your password"
                       {...passwordForm.register("password")}
                     />
-                    <FieldError>{passwordForm.formState.errors.password?.message}</FieldError>
+                    <FieldError>
+                      {passwordForm.formState.errors.password?.message}
+                    </FieldError>
                   </Field>
                   <Field>
                     <div>
-                      <Button type="submit" variant="destructive" disabled={isLoading}>
+                      <Button
+                        type="submit"
+                        variant="destructive"
+                        disabled={isLoading}
+                      >
                         {isLoading ? "Disabling..." : "Disable 2FA"}
                       </Button>
                     </div>

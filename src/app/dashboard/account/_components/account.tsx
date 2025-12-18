@@ -9,7 +9,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { authClient } from "@/server/better-auth/client";
-import { IconBrandGithub, IconBrandGoogleFilled, IconMailFilled, IconTrash, type IconProps } from "@tabler/icons-react";
+import {
+  IconBrandGithub,
+  IconBrandGoogleFilled,
+  IconMailFilled,
+  IconTrash,
+  type IconProps,
+} from "@tabler/icons-react";
 import {
   useState,
   type ForwardRefExoticComponent,
@@ -72,19 +78,23 @@ export default function Account({
     }
   };
 
-  const handleUnlinkProvider = async (accountId: string, providerId: string, providerName: string) => {
+  const handleUnlinkProvider = async (
+    accountId: string,
+    providerId: string,
+    providerName: string,
+  ) => {
     setIsUnlinking(accountId);
     try {
       const { error } = await authClient.unlinkAccount({
         providerId,
         accountId,
       });
-      
+
       if (error) {
         toast.error(error.message ?? `Failed to unlink ${providerName}`);
         return;
       }
-      
+
       toast.success(`${providerName} account unlinked successfully`);
       window.location.reload();
     } catch (error) {
@@ -155,10 +165,19 @@ export default function Account({
                       <Button
                         variant="ghost"
                         size="sm"
-                        onClick={() => handleUnlinkProvider(connected.accountId, providerId, displayName)}
+                        onClick={() =>
+                          handleUnlinkProvider(
+                            connected.accountId,
+                            providerId,
+                            displayName,
+                          )
+                        }
                         disabled={isUnlinking === connected.accountId}
                       >
-                        <IconTrash size={16} className="text-muted-foreground hover:text-destructive" />
+                        <IconTrash
+                          size={16}
+                          className="text-muted-foreground hover:text-destructive"
+                        />
                       </Button>
                     </>
                   ) : (

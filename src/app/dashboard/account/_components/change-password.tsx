@@ -1,7 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import {
   Card,
@@ -10,16 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldGroup } from "@/components/ui/field";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { useState } from "react";
-import { z } from "zod";
+import { type z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { createPasswordChangeSchema } from "@/lib/validation-schemas";
 import { TextField } from "@/components/ui/text-field";
@@ -142,7 +136,9 @@ export default function ChangePassword(props: ChangePasswordInterface) {
               <div>
                 <Button
                   type="submit"
-                  disabled={isLoadingChangeRequest || !props.hasCredentialsAccount}
+                  disabled={
+                    isLoadingChangeRequest || !props.hasCredentialsAccount
+                  }
                 >
                   {isLoadingChangeRequest ? "Updating..." : "Update Password"}
                 </Button>

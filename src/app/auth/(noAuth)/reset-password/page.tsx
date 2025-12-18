@@ -28,9 +28,16 @@ import { createPasswordConfirmationSchema } from "@/lib/validation-schemas";
 import { APP_CONFIG } from "@/config";
 import { AuthFormFooter } from "@/components/auth-form-footer";
 
-const resetPasswordFormSchema = createPasswordConfirmationSchema().extend({
-  newPassword: z.string().min(APP_CONFIG.auth.passwordMinLength, `Password must be at least ${APP_CONFIG.auth.passwordMinLength} characters long`),
-}).omit({ password: true });
+const resetPasswordFormSchema = createPasswordConfirmationSchema()
+  .extend({
+    newPassword: z
+      .string()
+      .min(
+        APP_CONFIG.auth.passwordMinLength,
+        `Password must be at least ${APP_CONFIG.auth.passwordMinLength} characters long`,
+      ),
+  })
+  .omit({ password: true });
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -93,9 +100,7 @@ export default function ResetPasswordPage() {
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Reset password</CardTitle>
-          <CardDescription>
-            Enter your new password below
-          </CardDescription>
+          <CardDescription>Enter your new password below</CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -150,10 +155,7 @@ export default function ResetPasswordPage() {
                 </Field>
               )}
               <Field>
-                <Button
-                  type="submit"
-                  disabled={isLoading || !token || !!error}
-                >
+                <Button type="submit" disabled={isLoading || !token || !!error}>
                   {isLoading ? "Resetting..." : "Reset password"}
                 </Button>
                 <FieldDescription className="text-center">

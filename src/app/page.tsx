@@ -1,10 +1,7 @@
-import { headers } from "next/headers";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { auth } from "@/server/better-auth";
 import { getSession } from "@/server/better-auth/server";
-import { api, HydrateClient } from "@/trpc/server";
+import { HydrateClient } from "@/trpc/server";
 import { Button } from "@/components/ui/button";
 import { APP_CONFIG } from "@/config";
 
@@ -49,7 +46,9 @@ export default async function Home() {
               </p>
               {session && (
                 <Button asChild>
-                  <Link href={APP_CONFIG.routes.dashboard}>Go to Dashboard</Link>
+                  <Link href={APP_CONFIG.routes.dashboard}>
+                    Go to Dashboard
+                  </Link>
                 </Button>
               )}
               {!session && (

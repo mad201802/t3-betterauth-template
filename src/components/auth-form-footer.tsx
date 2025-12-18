@@ -8,8 +8,9 @@ import { APP_CONFIG } from "@/config";
 export function AuthFormFooter() {
   return (
     <FieldDescription className="px-6 text-center">
-      By clicking continue, you agree to our <a href={APP_CONFIG.links.termsOfService}>Terms of Service</a>{" "}
-      and <a href={APP_CONFIG.links.privacyPolicy}>Privacy Policy</a>.
+      By clicking continue, you agree to our{" "}
+      <a href={APP_CONFIG.links.termsOfService}>Terms of Service</a> and{" "}
+      <a href={APP_CONFIG.links.privacyPolicy}>Privacy Policy</a>.
     </FieldDescription>
   );
 }

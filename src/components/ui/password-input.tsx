@@ -1,10 +1,9 @@
 import { Eye, EyeOff } from "lucide-react";
-import {
-  Field,
-  FieldError,
-  FieldLabel,
-} from "@/components/ui/field";
-import type { ControllerFieldState, ControllerRenderProps } from "react-hook-form";
+import { Field, FieldError, FieldLabel } from "@/components/ui/field";
+import type {
+  ControllerFieldState,
+  ControllerRenderProps,
+} from "react-hook-form";
 import { useState } from "react";
 import { Input } from "./input";
 import { Button } from "./button";
@@ -19,15 +18,19 @@ interface PasswordFieldProps {
   labelAddon?: ReactNode;
 }
 
-export default function PasswordInputField({ label, id, field, fieldState, labelAddon }: PasswordFieldProps) {
+export default function PasswordInputField({
+  label,
+  id,
+  field,
+  fieldState,
+  labelAddon,
+}: PasswordFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <Field data-invalid={fieldState.invalid}>
       <div className="flex items-center pt-3">
-        <FieldLabel htmlFor={id}>
-          {label}
-        </FieldLabel>
+        <FieldLabel htmlFor={id}>{label}</FieldLabel>
         {labelAddon}
       </div>
       <div className="relative">
@@ -42,15 +45,17 @@ export default function PasswordInputField({ label, id, field, fieldState, label
           type="button"
           variant="ghost"
           size="sm"
-          className="absolute right-2 top-1/2 -translate-y-1/2 h-8 w-8 p-0"
+          className="absolute top-1/2 right-2 h-8 w-8 -translate-y-1/2 p-0"
           onClick={() => setShowPassword(!showPassword)}
         >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          {showPassword ? (
+            <EyeOff className="h-4 w-4" />
+          ) : (
+            <Eye className="h-4 w-4" />
+          )}
         </Button>
       </div>
-      {fieldState.invalid && (
-        <FieldError errors={[fieldState.error]} />
-      )}
+      {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
     </Field>
   );
 }

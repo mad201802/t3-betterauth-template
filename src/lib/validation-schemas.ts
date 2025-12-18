@@ -23,7 +23,10 @@ export const emailSchema = z
  */
 export const passwordSchema = z
   .string()
-  .min(APP_CONFIG.auth.passwordMinLength, `Password must be at least ${APP_CONFIG.auth.passwordMinLength} characters long`);
+  .min(
+    APP_CONFIG.auth.passwordMinLength,
+    `Password must be at least ${APP_CONFIG.auth.passwordMinLength} characters long`,
+  );
 
 /**
  * Helper to create a password confirmation schema

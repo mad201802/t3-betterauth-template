@@ -40,9 +40,9 @@ export default function Verify2FAPage() {
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     const verificationCode = showBackupCode ? backupCode : code;
-    
+
     if (!verificationCode || verificationCode.length < 6) {
       toast.error("Please enter a valid code");
       return;
@@ -51,7 +51,7 @@ export default function Verify2FAPage() {
     setIsLoading(true);
 
     try {
-      const { error } = showBackupCode 
+      const { error } = showBackupCode
         ? await authClient.twoFactor.verifyBackupCode({
             code: verificationCode,
           })
@@ -80,7 +80,7 @@ export default function Verify2FAPage() {
         <CardHeader>
           <CardTitle>Two-Factor Authentication</CardTitle>
           <CardDescription>
-            {showBackupCode 
+            {showBackupCode
               ? "Enter one of your backup codes to verify your identity"
               : "Enter the 6-digit code from your authenticator app"}
           </CardDescription>
@@ -150,8 +150,8 @@ export default function Verify2FAPage() {
                 }}
                 className="text-sm"
               >
-                {showBackupCode 
-                  ? "Use authenticator code instead" 
+                {showBackupCode
+                  ? "Use authenticator code instead"
                   : "Use backup code instead"}
               </Button>
             </div>
