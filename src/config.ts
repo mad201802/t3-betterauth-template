@@ -1,3 +1,43 @@
+type EmailTemplateParams = {
+  user: string;
+  url: string;
+};
+
+type AppConfig = {
+  readonly naming: {
+    readonly applicationName: string;
+    readonly applicationShortName: string;
+  };
+  readonly routes: {
+    readonly home: string;
+    readonly signIn: string;
+    readonly signUp: string;
+    readonly recovery: string;
+    readonly resetPassword: string;
+    readonly verify2FA: string;
+    readonly dashboard: string;
+    readonly accountSettings: string;
+  };
+  readonly auth: {
+    readonly defaultRedirectAfterAuth: string;
+    readonly passwordMinLength: number;
+    readonly emailMinLength: number;
+    readonly emailMaxLength: number;
+  };
+  readonly ui: {
+    readonly qrCodeSize: number;
+  };
+  readonly links: {
+    readonly termsOfService: string;
+    readonly privacyPolicy: string;
+  };
+  readonly email: {
+    readonly fromAddress: string;
+    readonly resetPasswordMailBody: (params: EmailTemplateParams) => string;
+    readonly emailVerifyMailBody: (params: EmailTemplateParams) => string;
+  };
+};
+
 export const APP_CONFIG = {
   naming: {
     applicationName: "BetterAuth Template",
@@ -39,7 +79,7 @@ export const APP_CONFIG = {
   },
   email: {
     fromAddress: "Acme <onboarding@resend.dev>",
-    resetPasswordMailBody: ({ user, url }: { user: string; url: string }) => `
+    resetPasswordMailBody: ({ user, url }: EmailTemplateParams) => `
         <!DOCTYPE html>
         <html>
           <head>
@@ -67,7 +107,7 @@ export const APP_CONFIG = {
           </body>
         </html>
         `,
-    emailVerifyMailBody: ({ user, url }: { user: string; url: string }) => `
+    emailVerifyMailBody: ({ user, url }: EmailTemplateParams) => `
         <!DOCTYPE html>
         <html>
           <head>
@@ -96,4 +136,4 @@ export const APP_CONFIG = {
         </html>
         `,
   },
-};
+} as const satisfies AppConfig;
