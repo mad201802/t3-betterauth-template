@@ -28,7 +28,16 @@ import { useRedirectParam } from "@/hooks/use-redirect-param";
 const signUpFormSchema = z
   .object({
     name: z.string().min(2).max(50),
-    email: z.string().email(),
+    email: z
+      .email("Invalid email address")
+      .min(5)
+      .max(254) // RFC 5321
+      .toLowerCase()
+      .trim()
+      .regex(
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "Invalid email format",
+      ),
     password: z.string().min(8, "Password must be at least 8 characters long"),
     confirmPassword: z.string().min(8),
   })
@@ -64,7 +73,7 @@ export default function SignInPage() {
           email: data.email,
           password: data.password,
           name: data.name,
-          callbackURL: redirectTo ?? '/dashboard',
+          callbackURL: redirectTo ?? "/dashboard",
         },
         {
           onError: (ctx) => {
@@ -229,7 +238,15 @@ export default function SignInPage() {
                 </Button>
                 <FieldDescription className="text-center">
                   Already have an account?{" "}
-                  <Link href={redirectTo ? `/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}` : '/auth/sign-in'}>Sign in</Link>
+                  <Link
+                    href={
+                      redirectTo
+                        ? `/auth/sign-in?redirect=${encodeURIComponent(redirectTo)}`
+                        : "/auth/sign-in"
+                    }
+                  >
+                    Sign in
+                  </Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
