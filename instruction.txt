@@ -1,1 +1,0 @@
-Use for the Verify2FAPage the Shadcnui https://ui.shadcn.com/docs/components/input-otp component. Use bun for installation.
