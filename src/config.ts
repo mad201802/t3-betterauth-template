@@ -12,6 +12,25 @@ import {
 } from "@/lib/email-templates";
 
 /**
+ * Product configuration type for pricing plans
+ */
+export type ProductConfig = {
+  readonly productId: string;
+  readonly slug: string;
+  readonly name: string;
+  readonly description: string;
+  readonly whatYouGet: readonly string[];
+  readonly whatYouDontGet: readonly string[];
+  readonly currency: string;
+  readonly periods: {
+    readonly period: "month" | "year";
+    readonly price: number;
+  }[];
+  readonly actionButtonLink: string;
+  readonly featured?: boolean;
+};
+
+/**
  * Application configuration type
  */
 type AppConfig = {
@@ -138,6 +157,9 @@ type AppConfig = {
     /** Category of the application */
     readonly category: string;
   };
+  readonly payments: {
+    readonly products: ProductConfig[];
+  }
 };
 
 /**
@@ -284,5 +306,109 @@ export const APP_CONFIG = {
 
     // Application category
     category: "technology",
+  },
+  payments: {
+    products: [
+      {
+        productId: "BASIC_PLAN",
+        slug: "basic-plan",
+        name: "Starter",
+        description: "Perfect for individuals and small teams getting started with AI-powered automation.",
+        whatYouGet: [
+          "Up to 3 team members",
+          "100 AI tokens per month",
+          "5,000 API calls per month",
+          "Email support",
+          "Basic analytics dashboard",
+          "Community access"
+        ],
+        whatYouDontGet: [
+          "No priority support",
+          "No advanced integrations",
+          "No custom branding"
+        ],
+        currency: "€",
+        periods: [
+          {
+            period: "month",
+            price: 9.99,
+          },
+          {
+            period: "year",
+            price: 99.99,
+          },
+        ],
+        actionButtonLink: "/dashboard/subscriptions?plan={slug}",
+        featured: false,
+      },
+      {
+        productId: "PRO_PLAN",
+        slug: "pro-plan",
+        name: "Professional",
+        description: "Advanced features for growing businesses and teams that need more power.",
+        whatYouGet: [
+          "Up to 10 team members",
+          "500 AI tokens per month",
+          "25,000 API calls per month",
+          "Priority email support",
+          "Advanced analytics & reporting",
+          "Custom integrations",
+          "API access",
+          "99.9% uptime SLA"
+        ],
+        whatYouDontGet: [
+          "No dedicated account manager",
+          "No custom SLA",
+          "No white-label options"
+        ],
+        currency: "€",
+        periods: [
+          {
+            period: "month",
+            price: 29.99,
+          },
+          {
+            period: "year",
+            price: 249.99,
+          },
+        ],
+        actionButtonLink: "/dashboard/subscriptions?plan={slug}",
+        featured: true,
+      },
+      {
+        productId: "ENTERPRISE_PLAN",
+        slug: "enterprise-plan",
+        name: "Enterprise",
+        description: "Custom solutions for large organizations with enterprise-grade requirements.",
+        whatYouGet: [
+          "Unlimited team members",
+          "Unlimited AI tokens",
+          "Unlimited API calls",
+          "24/7 dedicated support",
+          "Custom analytics & reporting",
+          "All integrations included",
+          "White-label options",
+          "Custom SLA & contracts",
+          "Dedicated account manager",
+          "On-premise deployment option",
+          "Advanced security & compliance",
+          "Custom feature development"
+        ],
+        whatYouDontGet: [],
+        currency: "€",
+        periods: [
+          {
+            period: "month",
+            price: 99.99,
+          },
+          {
+            period: "year",
+            price: 999.99,
+          },
+        ],
+        actionButtonLink: "/dashboard/subscriptions?plan={slug}",
+        featured: false,
+      },
+    ],
   },
 } as const satisfies AppConfig;
