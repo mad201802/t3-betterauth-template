@@ -164,21 +164,23 @@ export default function ManagePasskeys() {
             device&apos;s security.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-4">
+        <CardContent className="flex flex-col gap-6">
           {/* Add Passkey Section */}
-          <div className="flex flex-col gap-3 rounded-lg border p-4">
+          <div className="flex flex-col gap-4 rounded-lg border border-dashed p-6 bg-muted/30">
             <div className="flex items-center gap-2">
-              <IconPlus size={20} />
-              <h3 className="font-semibold">Add New Passkey</h3>
+              <div className="bg-primary/10 rounded-full p-2">
+                <IconPlus size={20} className="text-primary" />
+              </div>
+              <h3 className="font-semibold text-base">Add New Passkey</h3>
             </div>
-            <div className="flex flex-col gap-3 sm:flex-row">
-              <div className="flex-1">
-                <Label htmlFor="passkey-name" className="sr-only">
+            <div className="flex flex-col gap-4 sm:flex-row items-end">
+              <div className="flex-1 w-full">
+                <Label htmlFor="passkey-name" className="mb-2 block">
                   Passkey Name
                 </Label>
                 <Input
                   id="passkey-name"
-                  placeholder="Enter a name for your passkey (optional)"
+                  placeholder="e.g. MacBook Pro, iPhone 15"
                   value={newPasskeyName}
                   onChange={(e) => setNewPasskeyName(e.target.value)}
                   disabled={isAddingPasskey}
@@ -187,12 +189,12 @@ export default function ManagePasskeys() {
               <Button
                 onClick={handleAddPasskey}
                 disabled={isAddingPasskey}
-                className="sm:w-auto"
+                className="sm:w-auto w-full"
               >
                 {isAddingPasskey ? "Adding..." : "Add Passkey"}
               </Button>
             </div>
-            <p className="text-muted-foreground text-xs">
+            <p className="text-muted-foreground text-xs mt-1">
               You&apos;ll be prompted to use your device&apos;s biometrics or
               security key to create a passkey.
             </p>
@@ -204,21 +206,23 @@ export default function ManagePasskeys() {
               Loading passkeys...
             </div>
           ) : passkeys.length === 0 ? (
-            <div className="text-muted-foreground flex flex-col items-center justify-center gap-2 py-8 text-center">
-              <IconKey size={40} className="opacity-50" />
-              <p className="text-sm">
-                No passkeys found. Add your first passkey to enable passwordless
-                authentication.
+            <div className="text-muted-foreground flex flex-col items-center justify-center gap-2 py-8 text-center border rounded-lg border-dashed">
+              <IconKey size={40} className="opacity-20" />
+              <p className="text-sm font-medium">
+                No passkeys found
+              </p>
+              <p className="text-xs text-muted-foreground">
+                Add your first passkey to enable passwordless authentication.
               </p>
             </div>
           ) : (
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-4">
               {passkeys.map((passkey) => (
                 <div
                   key={passkey.id}
-                  className="flex items-center justify-between rounded-lg border p-4"
+                  className="flex items-center justify-between rounded-lg border p-4 transition-colors hover:bg-muted/30"
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-4">
                     <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
                       {getDeviceIcon(passkey.deviceType)}
                     </div>

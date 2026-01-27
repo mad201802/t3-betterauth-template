@@ -113,12 +113,12 @@ export default async function ViewSessions() {
       </CardHeader>
       <CardContent>
         {sessions.length === 0 ? (
-          <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center">
-            <IconDeviceLaptop className="mb-4 h-12 w-12 opacity-50" />
-            <p className="text-sm">No active sessions found.</p>
+          <div className="text-muted-foreground flex flex-col items-center justify-center py-12 text-center border rounded-lg border-dashed">
+            <IconDeviceLaptop className="mb-4 h-12 w-12 opacity-20" />
+            <p className="text-sm font-medium">No active sessions found</p>
           </div>
         ) : (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4">
             {sortedSessions.map((session) => {
               const isCurrentSession =
                 session.token === currentSession?.session.token;
@@ -129,9 +129,8 @@ export default async function ViewSessions() {
               return (
                 <div
                   key={session.id}
-                  className={`border-border flex items-start gap-4 rounded-lg border p-4 transition-colors ${
-                    isCurrentSession ? "bg-muted/50" : "hover:bg-muted/30"
-                  }`}
+                  className={`border-border flex items-start gap-4 rounded-lg border p-4 transition-colors ${isCurrentSession ? "bg-muted/50 border-primary/20" : "hover:bg-muted/30"
+                    }`}
                 >
                   <div className="text-muted-foreground mt-1">
                     {getDeviceIcon(session.userAgent)}
@@ -159,7 +158,7 @@ export default async function ViewSessions() {
 
                       <div className="flex items-center gap-2">
                         {isCurrentSession && (
-                          <Badge variant="default" className="shrink-0">
+                          <Badge variant="default" className="shrink-0 bg-green-500/15 text-green-700 dark:text-green-400 hover:bg-green-500/25 border-0">
                             Current Session
                           </Badge>
                         )}
@@ -185,7 +184,7 @@ export default async function ViewSessions() {
                           type="submit"
                           variant="outline"
                           size="sm"
-                          className="mt-2"
+                          className="mt-2 h-8"
                           formAction={async () => {
                             "use server";
                             await auth.api.revokeSession({

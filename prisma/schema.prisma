@@ -2,8 +2,9 @@
 // learn more: https://better-auth.com/docs/concepts/database
 
 generator client {
-  provider = "prisma-client-js"
-  output   = "../generated/prisma"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+  output        = "../generated/prisma"
 }
 
 // NOTE: When using mysql or sqlserver, uncomment the //@db.Text annotations in model Account below
@@ -44,8 +45,8 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([token])
-  @@map("session")
   @@index([userId])
+  @@map("session")
 }
 
 model Account {
@@ -63,8 +64,8 @@ model Account {
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
-  @@map("account")
   @@index([userId])
+  @@map("account")
 }
 
 model Verification {
@@ -75,8 +76,8 @@ model Verification {
   createdAt  DateTime @default(now())
   updatedAt  DateTime @default(now()) @updatedAt
 
-  @@map("verification")
   @@index([identifier])
+  @@map("verification")
 }
 
 model Passkey {

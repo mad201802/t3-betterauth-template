@@ -150,7 +150,7 @@ export default function Account({
           Link your account to third-party authentication providers.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-3">
+      <CardContent className="flex flex-col gap-6">
         {configuredProviders
           .filter((p) => p !== "credential")
           .map((providerId) => {
@@ -166,7 +166,7 @@ export default function Account({
                 key={providerId}
                 className="flex items-center justify-between rounded-lg border p-4"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-4">
                   <div className="bg-muted flex h-10 w-10 items-center justify-center rounded-full">
                     {Icon ? (
                       <Icon size={20} />
@@ -188,7 +188,7 @@ export default function Account({
                 <div className="flex items-center gap-3">
                   {connected ? (
                     <>
-                      <p className="text-muted-foreground text-xs">
+                      <p className="text-muted-foreground text-xs hidden sm:block">
                         Connected on {formatDate(connected.createdAt)}
                       </p>
                       <Button

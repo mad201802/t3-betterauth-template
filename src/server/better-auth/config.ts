@@ -11,9 +11,11 @@ import { APP_CONFIG } from "@/config";
 export const auth = betterAuth({
   appName: APP_CONFIG.naming.applicationShortName,
   plugins: [
-    passkey(),
+    passkey({
+      origin: env.BETTER_AUTH_URL,
+    }),
     magicLink({
-      sendMagicLink: async ({ email, url, token }) => {
+      sendMagicLink: async ({ email, url }) => {
         await sendMail(
           APP_CONFIG.email.fromAddress,
           email,

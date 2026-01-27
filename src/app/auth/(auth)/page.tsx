@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { Field, FieldError, FieldGroup } from "@/components/ui/field";
+import { Field, FieldGroup } from "@/components/ui/field";
 import {
   Card,
   CardContent,
@@ -13,15 +13,16 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { useState, useEffect } from "react";
-import { set, z } from "zod";
+import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
 import { AuthFormFooter } from "@/components/auth-form-footer";
 import { APP_CONFIG } from "@/config";
-import { Github, KeyRound } from "lucide-react";
+import { KeyRound } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { emailSchema } from "@/lib/validation-schemas";
 import { EmailField } from "@/components/ui/text-field";
+import { IconBrandGithubFilled, IconBrandGoogleFilled } from "@tabler/icons-react";
 
 const authFormSchema = z.object({
   email: emailSchema,
@@ -29,8 +30,7 @@ const authFormSchema = z.object({
 
 export default function AuthPage() {
   const redirectTo = useRedirectParam();
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState<string | null>(null);
+  const [responseMessage, setResponseMessage] = useState<{ type: "success" | "error"; message: string } | null>(null);
   const [isLoading, setIsLoading] = useState<string | null>(null);
 
   const form = useForm<z.infer<typeof authFormSchema>>({
@@ -65,42 +65,45 @@ export default function AuthPage() {
 
   // Clear success message after 10 seconds
   useEffect(() => {
-    if (success) {
+    if (responseMessage) {
       const timer = setTimeout(() => {
-        setSuccess(null);
+        setResponseMessage(null);
       }, 10000);
       return () => clearTimeout(timer);
     }
-  }, [success]);
+  }, [responseMessage]);
 
   const onSubmit = async (data: z.infer<typeof authFormSchema>) => {
-    setError(null);
-    setSuccess(null);
+    setResponseMessage(null);
     setIsLoading("email");
 
     try {
-      await authClient.signIn.magicLink({
+      const response = await authClient.signIn.magicLink({
         email: data.email,
         callbackURL: redirectTo ?? APP_CONFIG.routes.dashboard,
       });
 
+      if (response.error) {
+        setResponseMessage({ type: "error", message: "Failed to send magic link. Please try again." });
+        return;
+      }
+
       // Show success message - user should check their email
-      setError(null);
-      setSuccess("Check your email for a magic link to sign in!");
+      setResponseMessage({ type: "success", message: "Check your email for a magic link to sign in!" });
       form.reset();
     } catch (err) {
       console.error("Magic link error:", err);
-      setError("Failed to send magic link. Please try again.");
+      setResponseMessage({ type: "error", message: "Failed to send magic link. Please try again." });
     } finally {
       setIsLoading(null);
     }
   };
 
   const handlePasskeyAuth = async () => {
-    setError(null);
+    setResponseMessage(null);
     setIsLoading("passkey");
     try {
-      await authClient.signIn.passkey({
+      const response = await authClient.signIn.passkey({
         autoFill: false,
         fetchOptions: {
           onSuccess(_context) {
@@ -114,16 +117,19 @@ export default function AuthPage() {
           },
         },
       });
+
+      console.log(response);
+
       // Successful authentication will redirect automatically
     } catch (err) {
       console.error("Passkey auth error:", err);
-      setError("Failed to sign in with passkey");
+      setResponseMessage({ type: "error", message: "Failed to sign in with passkey" });
       setIsLoading(null);
     }
   };
 
   const handleSocialAuth = async (provider: "github" | "google") => {
-    setError(null);
+    setResponseMessage(null);
     setIsLoading(provider);
     try {
       await authClient.signIn.social({
@@ -132,7 +138,7 @@ export default function AuthPage() {
       });
     } catch (err) {
       console.error(`${provider} auth error:`, err);
-      setError(`Failed to sign in with ${provider}`);
+      setResponseMessage({ type: "error", message: `Failed to sign in with ${provider}` });
       setIsLoading(null);
     }
   };
@@ -170,12 +176,6 @@ export default function AuthPage() {
                 >
                   {isLoading === "email" ? "Sending link..." : "Send Magic Link"}
                 </Button>
-                {/* Success Message */}
-                {success && (
-                  <div className="text-sm text-center text-green-600 dark:text-green-500">
-                    {success}
-                  </div>
-                )}
               </FieldGroup>
             </form>
 
@@ -198,7 +198,7 @@ export default function AuthPage() {
               disabled={isLoading !== null}
               className="w-full"
             >
-              <KeyRound className="mr-2 h-5 w-5" />
+              <KeyRound className="h-5 w-5" />
               {isLoading === "passkey" ? "Authenticating..." : "Passkey"}
             </Button>
 
@@ -211,7 +211,7 @@ export default function AuthPage() {
                 disabled={isLoading !== null}
                 className="w-full"
               >
-                <Github className="mr-2 h-5 w-5" />
+                <IconBrandGithubFilled className="h-5 w-5" />
                 {isLoading === "github" ? "Connecting..." : "GitHub"}
               </Button>
 
@@ -222,16 +222,15 @@ export default function AuthPage() {
                 disabled={isLoading !== null}
                 className="w-full"
               >
-                <span className="ml-2">
-                  {isLoading === "google" ? "Connecting..." : "Google"}
-                </span>
+                <IconBrandGoogleFilled className="h-5 w-5" />
+                {isLoading === "google" ? "Connecting..." : "Google"}
               </Button>
             </div>
 
-            {/* Error Display */}
-            {error && (
+            {/* Response Message Display */}
+            {responseMessage && (
               <Field>
-                <FieldError errors={[{ message: error }]} />
+                <p className={cn("text-center", responseMessage.type === "error" ? "text-red-500" : "text-green-500")}>{responseMessage.message}</p>
               </Field>
             )}
           </div>
