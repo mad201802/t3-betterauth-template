@@ -3,9 +3,7 @@ import { auth } from "@/server/better-auth";
 import { headers } from "next/headers";
 import React from "react";
 import Account from "@/components/account/account";
-import ChangePassword from "@/components/account/change-password";
 import ViewSessions from "@/components/account/view-sessions";
-import TwoFactorAuth from "@/components/account/two-factor/two-factor-auth";
 import ManagePasskeys from "@/components/account/manage-passkeys";
 
 export default async function DashboardSettingsPage() {
@@ -30,18 +28,6 @@ export default async function DashboardSettingsPage() {
         <Account
           userAccounts={userAccounts}
           configuredProviders={configuredProviders}
-        />
-        <ChangePassword
-          hasCredentialsAccount={userAccounts.some(
-            (a) => a.providerId == "credential",
-          )}
-          email={session?.user.email}
-        />
-        <TwoFactorAuth
-          twoFactorEnabled={session?.user.twoFactorEnabled ?? false}
-          hasCredentialsAccount={userAccounts.some(
-            (a) => a.providerId == "credential",
-          )}
         />
         <ManagePasskeys />
         <ViewSessions />

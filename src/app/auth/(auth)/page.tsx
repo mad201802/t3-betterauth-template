@@ -66,18 +66,17 @@ export default function AuthPage() {
     setIsLoading("email");
 
     try {
-      // TODO: Implement better-auth email authentication
-      // Example: magic link or passwordless auth
-      console.log("Authenticating with email:", data.email);
+      await authClient.signIn.magicLink({
+        email: data.email,
+        callbackURL: redirectTo ?? APP_CONFIG.routes.dashboard,
+      });
       
-      // Placeholder for actual implementation
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      
-      // After successful authentication, redirect
-      // window.location.href = redirectTo ?? APP_CONFIG.routes.dashboard;
+      // Show success message - user should check their email
+      setError(null);
+      alert("Check your email for a magic link to sign in!");
     } catch (err) {
-      console.error("Email auth error:", err);
-      setError("Failed to authenticate. Please try again.");
+      console.error("Magic link error:", err);
+      setError("Failed to send magic link. Please try again.");
     } finally {
       setIsLoading(null);
     }

@@ -26,9 +26,6 @@ model User {
   sessions      Session[]
   accounts      Account[]
 
-  twoFactorEnabled Boolean?    @default(false)
-  twofactors       TwoFactor[]
-
   passkeys Passkey[]
 
   @@unique([email])
@@ -63,7 +60,6 @@ model Account {
   accessTokenExpiresAt  DateTime?
   refreshTokenExpiresAt DateTime?
   scope                 String? //@db.Text
-  password              String? //@db.Text
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
@@ -81,18 +77,6 @@ model Verification {
 
   @@map("verification")
   @@index([identifier])
-}
-
-model TwoFactor {
-  id          String @id
-  secret      String
-  backupCodes String
-  userId      String
-  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([secret])
-  @@index([userId])
-  @@map("twoFactor")
 }
 
 model Passkey {
