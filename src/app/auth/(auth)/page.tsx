@@ -12,7 +12,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { z } from "zod";
 import { authClient } from "@/server/better-auth/client";
 import { useRedirectParam } from "@/hooks/use-redirect-param";
@@ -60,6 +60,24 @@ export default function AuthPage() {
       email: "",
     },
   });
+
+  // Initialize conditional UI for passkey authentication
+  useEffect(() => {
+    // Check if browser supports conditional UI
+    if (!PublicKeyCredential?.isConditionalMediationAvailable) {
+      return;
+    }
+    
+    // Check if conditional mediation is available
+    void PublicKeyCredential.isConditionalMediationAvailable().then(
+      (available) => {
+        if (available) {
+          // Preload passkeys with autoFill for conditional UI
+          void authClient.signIn.passkey({ autoFill: true });
+        }
+      },
+    );
+  }, []);
 
   const onSubmit = async (data: z.infer<typeof authFormSchema>) => {
     setError(null);
@@ -119,6 +137,7 @@ export default function AuthPage() {
                       id="auth-email"
                       field={field}
                       fieldState={fieldState}
+                      autoComplete="email webauthn"
                     />
                   )}
                 />
