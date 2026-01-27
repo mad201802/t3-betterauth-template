@@ -92,7 +92,7 @@ function ResetPasswordForm() {
       if (error) {
         setError(error.message ?? "Failed to reset password");
       } else {
-        router.push(`${APP_CONFIG.routes.signIn}?reset=success`);
+        router.push(`${APP_CONFIG.routes.auth}?reset=success`);
       }
     } catch (err) {
       console.error("Password reset error:", err);
@@ -167,7 +167,7 @@ function ResetPasswordForm() {
                 </Button>
                 <FieldDescription className="text-center">
                   Remember your password?{" "}
-                  <Link href={APP_CONFIG.routes.signIn}>Sign in</Link>
+                  <Link href={APP_CONFIG.routes.auth}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>

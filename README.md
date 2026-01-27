@@ -107,8 +107,7 @@ import { APP_CONFIG } from "@/config";
 APP_CONFIG.naming.applicationName
 
 // Access routes
-APP_CONFIG.routes.dashboard
-APP_CONFIG.routes.signIn
+APP_CONFIG.routes.auth
 
 // Access auth settings
 APP_CONFIG.auth.passwordMinLength

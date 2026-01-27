@@ -43,13 +43,13 @@ export default async function Home() {
               {!session ? (
                 <>
                   <Button asChild size="lg" className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all">
-                    <Link href={APP_CONFIG.routes.signUp}>
+                    <Link href={APP_CONFIG.routes.auth}>
                       Get Started Free
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline">
-                    <Link href={APP_CONFIG.routes.signIn}>
+                    <Link href={APP_CONFIG.routes.auth}>
                       Sign In
                     </Link>
                   </Button>

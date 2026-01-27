@@ -43,10 +43,8 @@ type AppConfig = {
   readonly routes: {
     /** Public home page */
     readonly home: string;
-    /** Sign in page */
-    readonly signIn: string;
-    /** Sign up page */
-    readonly signUp: string;
+    /** Auth page */
+    readonly auth: string;
     /** Password recovery page */
     readonly recovery: string;
     /** Reset password page (from email link) */
@@ -187,8 +185,7 @@ export const APP_CONFIG = {
     home: "/",
 
     // Auth routes
-    signIn: "/auth/sign-in",
-    signUp: "/auth/sign-up",
+    auth: "/auth",
     recovery: "/auth/recovery",
     resetPassword: "/auth/reset-password",
     verify2FA: "/auth/verify-2fa",

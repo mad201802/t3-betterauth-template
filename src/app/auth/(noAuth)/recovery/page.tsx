@@ -135,7 +135,7 @@ function RecoveryForm() {
                 </Button>
                 <FieldDescription className="text-center">
                   Can you remember your password?{" "}
-                  <Link href={APP_CONFIG.routes.signIn}>Sign in</Link>
+                  <Link href={APP_CONFIG.routes.auth}>Sign in</Link>
                 </FieldDescription>
               </Field>
             </FieldGroup>
