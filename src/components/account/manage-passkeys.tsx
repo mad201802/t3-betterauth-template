@@ -164,7 +164,7 @@ export default function ManagePasskeys() {
             device&apos;s security.
           </CardDescription>
         </CardHeader>
-        <CardContent className="flex flex-col gap-6">
+        <CardContent className="flex flex-col gap-2">
           {/* Add Passkey Section */}
           <div className="flex flex-col gap-4 rounded-lg border border-dashed p-6 bg-muted/30">
             <div className="flex items-center gap-2">

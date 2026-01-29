@@ -44,18 +44,14 @@ const providerDisplayNames: Record<
     icon: ForwardRefExoticComponent<IconProps & RefAttributes<SVGSVGElement>>;
   }
 > = {
-  github: {
-    name: "GitHub",
-    icon: IconBrandGithub,
-  },
   google: {
     name: "Google",
     icon: IconBrandGoogleFilled,
   },
-  credential: {
-    name: "Email",
-    icon: IconMailFilled,
-  },
+  github: {
+    name: "GitHub",
+    icon: IconBrandGithub,
+  }
 };
 
 export default function Account({
@@ -150,7 +146,7 @@ export default function Account({
           Link your account to third-party authentication providers.
         </CardDescription>
       </CardHeader>
-      <CardContent className="flex flex-col gap-6">
+      <CardContent className="flex flex-col gap-2">
         {configuredProviders
           .filter((p) => p !== "credential")
           .map((providerId) => {
