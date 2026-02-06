@@ -31,23 +31,22 @@ export type { Session } from "@/server/better-auth/config";
 
 import type { Icon } from "@tabler/icons-react";
 
+export interface NavGroup {
+  title?: string;
+  items: NavItem[];
+}
+
 /**
  * Navigation item for the sidebar
  */
 export interface NavItem {
   title: string;
+  description?: string;
   url: string;
   icon?: Icon;
   isActive?: boolean;
-  items?: NavSubItem[];
-}
-
-/**
- * Sub-navigation item (nested under a NavItem)
- */
-export interface NavSubItem {
-  title: string;
-  url: string;
+  expanded?: boolean; // For collapsible items, whether they are expanded by default
+  items?: NavItem[];
 }
 
 // =============================================================================

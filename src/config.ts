@@ -170,12 +170,12 @@ export const APP_CONFIG = {
     auth: "/auth",
 
     // Protected routes
-    dashboard: "/dashboard",
-    accountSettings: "/dashboard/account",
+    dashboard: "/app/dashboard",
+    accountSettings: "/app/account",
   },
 
   auth: {
-    defaultRedirectAfterAuth: "/dashboard",
+    defaultRedirectAfterAuth: "/app/dashboard",
     emailMinLength: 5,
     emailMaxLength: 254,
   },

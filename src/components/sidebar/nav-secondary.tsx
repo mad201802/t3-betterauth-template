@@ -24,7 +24,7 @@ interface NavSecondaryProps extends React.ComponentPropsWithoutRef<typeof Sideba
  * Secondary navigation component for the sidebar
  * Displays items at the bottom of the sidebar (Settings, Help, etc.)
  */
-export function NavSecondary({ items, ...props }: NavSecondaryProps) {
+export function NavBottomGroup({ items, ...props }: NavSecondaryProps) {
   return (
     <SidebarGroup {...props}>
       <SidebarGroupContent>

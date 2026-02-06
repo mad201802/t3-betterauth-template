@@ -3,8 +3,8 @@
 import * as React from "react";
 import { IconInnerShadowTop } from "@tabler/icons-react";
 
-import { NavMain } from "@/components/sidebar/nav-main";
-import { NavSecondary } from "@/components/sidebar/nav-secondary";
+import { NavMainGroup } from "@/components/sidebar/nav-main";
+import { NavBottomGroup } from "@/components/sidebar/nav-secondary";
 import { NavUser } from "@/components/sidebar/nav-user";
 import {
   Sidebar,
@@ -16,7 +16,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { APP_CONFIG } from "@/config";
-import { mainNavItems, secondaryNavItems } from "@/constants/navigation";
+import { mainNavGroups, secondaryNavItems } from "@/constants/navigation";
 
 /**
  * Main application sidebar component
@@ -44,8 +44,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={mainNavItems} />
-        <NavSecondary items={secondaryNavItems} className="mt-auto" />
+        <NavMainGroup items={mainNavGroups} />
+        <NavBottomGroup items={secondaryNavItems} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         <NavUser />
