@@ -1,11 +1,22 @@
 import { APP_CONFIG } from "@/config";
+import { auth } from "@/server/better-auth";
 import { GalleryVerticalEnd } from "lucide-react";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 interface AuthLayoutProps {
   children: React.ReactNode;
 }
 
 export default async function AuthLayout(props: AuthLayoutProps) {
+
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+  if (session) {
+    redirect(APP_CONFIG.routes.dashboard);
+  }
+
   return (
     <div className="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
       <div className="flex w-full max-w-sm flex-col gap-6">

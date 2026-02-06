@@ -147,7 +147,7 @@ export default function AuthPage() {
     <div className={cn("flex flex-col gap-4")}>
       <Card>
         <CardHeader className="text-center">
-          <CardTitle className="text-xl">Welcome back</CardTitle>
+          <CardTitle className="text-xl">Welcome!</CardTitle>
           <CardDescription>
             Sign in to your account or create a new one
           </CardDescription>
