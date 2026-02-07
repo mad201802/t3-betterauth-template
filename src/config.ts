@@ -46,6 +46,8 @@ type AppConfig = {
     readonly auth: string;
     /** Main dashboard */
     readonly dashboard: string;
+    /** To Do page */
+    readonly todo: string;
     /** Account settings page */
     readonly accountSettings: string;
   };
@@ -171,6 +173,7 @@ export const APP_CONFIG = {
 
     // Protected routes
     dashboard: "/app/dashboard",
+    todo: "/app/todo",
     accountSettings: "/app/account",
   },
 

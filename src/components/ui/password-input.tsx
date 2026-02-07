@@ -1,3 +1,5 @@
+"use client";
+
 import { Eye, EyeOff } from "lucide-react";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import type {

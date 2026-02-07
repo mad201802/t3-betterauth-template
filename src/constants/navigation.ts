@@ -26,7 +26,6 @@ import {
   IconFriends,
   IconHome,
   IconPlus,
-  IconLayoutDashboard,
   IconBook,
 } from "@tabler/icons-react";
 import { APP_CONFIG } from "@/config";
@@ -45,7 +44,7 @@ export const mainNavGroups: NavGroup[] = [
       },
       {
         title: "To Do",
-        url: "#",
+        url: APP_CONFIG.routes.todo,
         icon: IconChecklist,
       },
     ],
