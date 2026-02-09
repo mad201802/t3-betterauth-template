@@ -137,3 +137,22 @@ export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popove
 
 // Calendar
 export { Calendar } from "./calendar";
+
+// Context Menu
+export {
+  ContextMenu,
+  ContextMenuTrigger,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuCheckboxItem,
+  ContextMenuRadioItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuGroup,
+  ContextMenuPortal,
+  ContextMenuSub,
+  ContextMenuSubContent,
+  ContextMenuSubTrigger,
+  ContextMenuRadioGroup,
+} from "./context-menu";

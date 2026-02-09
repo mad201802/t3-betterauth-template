@@ -6,11 +6,13 @@ import type { ParsedTaskInput, TaskData, TaskInputDefaults } from "@/components/
 import { Button, Skeleton } from "@/components/ui";
 import { api } from "@/trpc/react";
 import {
+  IconChevronDown,
+  IconChevronRight,
   IconDots,
   IconFilter,
   IconSortDescending,
 } from "@tabler/icons-react";
-import React, { useCallback, useEffect, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 
 interface TasksPanelProps {
@@ -21,6 +23,8 @@ interface TasksPanelProps {
 
 function formatPanelHeader(activeList: string) {
   switch (activeList) {
+    case "all":
+      return "All Tasks";
     case "today":
       return "Today";
     case "week":
@@ -212,7 +216,24 @@ export default function TasksPanel(props: TasksPanelProps) {
               ))}
             </div>
           ) : (
-            TaskSection("Tasks", "Tasks", tasksQuery.data ?? [], selectedTask, onSelectTask, handleToggleComplete)
+            <>
+              <TaskSection
+                label="Open"
+                tasks={(tasksQuery.data ?? []).filter((task) => !task.completed)}
+                selectedTask={selectedTask}
+                onSelectTask={onSelectTask}
+                onToggleComplete={handleToggleComplete}
+              />
+              <TaskSection
+                label="Completed"
+                tasks={(tasksQuery.data ?? []).filter((task) => task.completed)}
+                selectedTask={selectedTask}
+                onSelectTask={onSelectTask}
+                onToggleComplete={handleToggleComplete}
+                labelClass="text-muted-foreground"
+                defaultCollapsed
+              />
+            </>
           )}
         </div>
       </div>
@@ -220,41 +241,61 @@ export default function TasksPanel(props: TasksPanelProps) {
   );
 }
 
-function TaskSection(
-  key: string,
-  label: string,
-  sectionTasks: TaskData[],
-  selectedTask: TaskData | undefined,
-  onSelectTask: (task: TaskData) => void,
-  onToggleComplete: (taskId: string) => void,
-  options?: { labelClass?: string; collapsed?: boolean },
-) {
-  if (sectionTasks.length === 0) return null;
+interface TaskSectionProps {
+  label: string;
+  tasks: TaskData[];
+  selectedTask?: TaskData;
+  onSelectTask: (task: TaskData) => void;
+  onToggleComplete: (taskId: string) => void;
+  labelClass?: string;
+  defaultCollapsed?: boolean;
+}
+
+function TaskSection({
+  label,
+  tasks,
+  selectedTask,
+  onSelectTask,
+  onToggleComplete,
+  labelClass,
+  defaultCollapsed = false,
+}: TaskSectionProps) {
+  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+
+  if (tasks.length === 0) return null;
 
   return (
     <div className="mb-4">
       <button
         type="button"
         className="mb-2 flex w-full items-center gap-2 text-left"
+        onClick={() => setCollapsed((prev) => !prev)}
       >
-        <h3 className={`text-sm font-semibold ${options?.labelClass ?? ""}`}>
+        {collapsed ? (
+          <IconChevronRight className="text-muted-foreground h-4 w-4" />
+        ) : (
+          <IconChevronDown className="text-muted-foreground h-4 w-4" />
+        )}
+        <h3 className={`text-sm font-semibold ${labelClass ?? ""}`}>
           {label}
         </h3>
         <span className="text-muted-foreground text-xs">
-          {sectionTasks.length}
+          {tasks.length}
         </span>
       </button>
-      <div className="space-y-1.5">
-        {sectionTasks.map((task) => (
-          <TodoItem
-            key={task.id}
-            task={task}
-            selected={task.id === selectedTask?.id}
-            onToggleComplete={onToggleComplete}
-            onSelect={onSelectTask}
-          />
-        ))}
-      </div>
+      {!collapsed && (
+        <div className="space-y-1.5">
+          {tasks.map((task) => (
+            <TodoItem
+              key={task.id}
+              task={task}
+              selected={task.id === selectedTask?.id}
+              onToggleComplete={onToggleComplete}
+              onSelect={onSelectTask}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
-};
+}

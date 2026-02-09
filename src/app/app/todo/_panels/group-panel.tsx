@@ -1,9 +1,17 @@
 import { TodoListButton } from "@/components/todo-list-button";
 import { SMART_LISTS, PRIORITY_CONFIG } from "@/components/todo/types";
-import { Separator, Skeleton } from "@/components/ui";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+  Separator,
+  Skeleton,
+} from "@/components/ui";
 import { api } from "@/trpc/react";
-import { IconTag, IconFlag } from "@tabler/icons-react";
+import { IconTag, IconFlag, IconTrash } from "@tabler/icons-react";
 import React from "react";
+import { toast } from "sonner";
 
 interface GroupPanelProps {
   activeList: string;
@@ -21,15 +29,48 @@ function ListItemSkeleton() {
 }
 
 export default function GroupPanel(props: GroupPanelProps) {
-
+  const utils = api.useUtils();
   const tagsQuery = api.todo.getTags.useQuery();
   const smartListCountsQuery = api.todo.getSmartListCounts.useQuery();
+
+  const deleteTagMutation = api.todo.deleteTag.useMutation({
+    onMutate: async ({ id }) => {
+      await utils.todo.getTags.cancel();
+      const previousTags = utils.todo.getTags.getData();
+      utils.todo.getTags.setData(undefined, (old) =>
+        old?.filter((tag) => tag.id !== id)
+      );
+      return { previousTags };
+    },
+    onError: (err, _variables, context) => {
+      if (context?.previousTags) {
+        utils.todo.getTags.setData(undefined, context.previousTags);
+      }
+      toast.error(`Failed to delete tag: ${err.message}`);
+    },
+    onSuccess: () => {
+      toast.success("Tag deleted");
+      // If the deleted tag was selected, reset to inbox
+      if (props.activeList.startsWith("tag:")) {
+        props.setActiveList("inbox");
+      }
+    },
+    onSettled: () => {
+      void utils.todo.getTags.invalidate();
+      void utils.todo.getTasks.invalidate();
+    },
+  });
+
+  const handleDeleteTag = (tagId: string) => {
+    deleteTagMutation.mutate({ id: tagId });
+  };
 
   const isSmartListsLoading = smartListCountsQuery.isLoading;
   const isTagsLoading = tagsQuery.isLoading;
 
   // Smart list counts (derived)
   const smartListCounts: Record<string, number> = {
+    all: smartListCountsQuery.data?.all ?? 0,
     today: smartListCountsQuery.data?.today ?? 0,
     week: smartListCountsQuery.data?.week ?? 0,
     inbox: smartListCountsQuery.data?.inbox ?? 0,
@@ -81,15 +122,29 @@ export default function GroupPanel(props: GroupPanelProps) {
               </>
             ) : tagsQuery.data && tagsQuery.data.length > 0 ? (
               tagsQuery.data.map((tag) => (
-                <TodoListButton
-                  key={tag.id}
-                  icon={<IconTag className="h-4 w-4" />}
-                  text={tag.name}
-                  count={tag._count.tasks}
-                  dotColor={tag.color}
-                  selected={props.activeList === `tag:${tag.id}`}
-                  onClick={() => props.setActiveList(`tag:${tag.id}`)}
-                />
+                <ContextMenu key={tag.id}>
+                  <ContextMenuTrigger asChild>
+                    <div>
+                      <TodoListButton
+                        icon={<IconTag className="h-4 w-4" />}
+                        text={tag.name}
+                        count={tag._count.tasks}
+                        dotColor={tag.color}
+                        selected={props.activeList === `tag:${tag.id}`}
+                        onClick={() => props.setActiveList(`tag:${tag.id}`)}
+                      />
+                    </div>
+                  </ContextMenuTrigger>
+                  <ContextMenuContent>
+                    <ContextMenuItem
+                      variant="destructive"
+                      onClick={() => handleDeleteTag(tag.id)}
+                    >
+                      <IconTrash className="h-4 w-4" />
+                      Delete Tag
+                    </ContextMenuItem>
+                  </ContextMenuContent>
+                </ContextMenu>
               ))
             ) : (
               <p className="text-muted-foreground px-3 py-2 text-sm">

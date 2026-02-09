@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Calendar } from "@/components/ui/calendar";
+import { DateTimePicker, formatDateTime } from "@/components/ui/date-time-picker";
 import {
   Popover,
   PopoverContent,
@@ -28,7 +28,6 @@ import {
   IconPlus,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { type TaskData, type Priority, PRIORITY_CONFIG, type TagData } from "./types";
 import { MarkdownEditor } from "./markdown-editor";
 
@@ -59,7 +58,6 @@ export function TaskDetail({
 }: TaskDetailProps) {
   const [tagInput, setTagInput] = useState("");
   const [showTagPopover, setShowTagPopover] = useState(false);
-  const [dateOpen, setDateOpen] = useState(false);
 
   // Filter available tags to exclude already assigned ones
   const unassignedTags = useMemo(() => {
@@ -200,49 +198,15 @@ export function TaskDetail({
               <IconCalendar className="h-4 w-4" />
               <span className="text-xs">Due Date</span>
             </div>
-            <Popover open={dateOpen} onOpenChange={setDateOpen}>
-              <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={cn(
-                    "h-8 flex-1 justify-start text-left font-normal",
-                    !task.dueDate && "text-muted-foreground"
-                  )}
-                >
-                  {task.dueDate
-                    ? format(task.dueDate, "MMM d, yyyy")
-                    : "No due date"}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={task.dueDate ?? undefined}
-                  onSelect={(date) => {
-                    onUpdateTask(task.id, { dueDate: date ?? null });
-                    setDateOpen(false);
-                  }}
-                  initialFocus
-                />
-                {task.dueDate && (
-                  <div className="border-t p-2">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="w-full text-muted-foreground"
-                      onClick={() => {
-                        onUpdateTask(task.id, { dueDate: null });
-                        setDateOpen(false);
-                      }}
-                    >
-                      <IconX className="mr-2 h-3 w-3" />
-                      Clear date
-                    </Button>
-                  </div>
-                )}
-              </PopoverContent>
-            </Popover>
+            <DateTimePicker
+              value={task.dueDate}
+              onChange={(date) => onUpdateTask(task.id, { dueDate: date })}
+              placeholder="No due date"
+              className={cn(
+                "h-8 flex-1 justify-start text-left font-normal",
+                !task.dueDate && "text-muted-foreground"
+              )}
+            />
           </div>
 
           {/* Tags */}

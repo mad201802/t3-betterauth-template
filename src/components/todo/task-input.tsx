@@ -3,15 +3,9 @@
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
+import { DateTimePicker, formatDateTime } from "@/components/ui/date-time-picker";
 import { IconPlus, IconFlag, IconCalendar, IconX } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { format } from "date-fns";
 import { type ParsedTaskInput, type TaskInputDefaults, PRIORITY_CONFIG } from "./types";
 import { useTaskInput } from "./use-task-input";
 import { useAutocompleteOptions } from "./use-autocomplete-options";
@@ -27,11 +21,11 @@ interface DatePickerButtonProps {
 }
 
 function DatePickerButton({ dueDate, setDueDate }: DatePickerButtonProps) {
-  const [open, setOpen] = React.useState(false);
-
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+    <DateTimePicker
+      value={dueDate}
+      onChange={setDueDate}
+      trigger={
         <Button
           type="button"
           variant="ghost"
@@ -43,35 +37,8 @@ function DatePickerButton({ dueDate, setDueDate }: DatePickerButtonProps) {
         >
           <IconCalendar className="h-4 w-4" />
         </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0" align="start">
-        <Calendar
-          mode="single"
-          selected={dueDate ?? undefined}
-          onSelect={(date) => {
-            setDueDate(date ?? null);
-            setOpen(false);
-          }}
-          initialFocus
-        />
-        {dueDate && (
-          <div className="border-t p-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="w-full text-muted-foreground"
-              onClick={() => {
-                setDueDate(null);
-                setOpen(false);
-              }}
-            >
-              <IconX className="mr-2 h-3 w-3" />
-              Clear date
-            </Button>
-          </div>
-        )}
-      </PopoverContent>
-    </Popover>
+      }
+    />
   );
 }
 
@@ -223,7 +190,7 @@ function ModifierBadges({
           onClick={onClearDueDate}
         >
           <IconCalendar className="h-3 w-3" />
-          {format(dueDate, "MMM d, yyyy")}
+          {formatDateTime(dueDate)}
           <IconX className="ml-0.5 h-3 w-3 opacity-60 hover:opacity-100" />
         </Badge>
       )}

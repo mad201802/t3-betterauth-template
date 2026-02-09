@@ -395,7 +395,16 @@ export const todoRouter = createTRPCRouter({
                 },
             });
 
+            // Count all uncompleted tasks
+            const allCount = await ctx.db.task.count({
+                where: {
+                    userId,
+                    completed: false,
+                },
+            });
+
             return {
+                all: allCount,
                 today: todayCount,
                 week: weekCount,
                 inbox: inboxCount,

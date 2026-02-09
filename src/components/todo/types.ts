@@ -1,5 +1,5 @@
 import type { RouterOutputs } from "@/trpc/react";
-import { IconCalendar, IconCalendarWeek, IconInbox } from "@tabler/icons-react";
+import { IconCalendar, IconCalendarWeek, IconInbox, IconListCheck } from "@tabler/icons-react";
 
 // ============================================================================
 // Core Task Types
@@ -61,6 +61,7 @@ export interface AutocompleteOption {
 // ============================================================================
 
 export const SMART_LISTS = [
+  { id: "all", name: "All", icon: IconListCheck },
   { id: "today", name: "Today", icon: IconCalendar },
   { id: "week", name: "Next 7 Days", icon: IconCalendarWeek },
   { id: "inbox", name: "Inbox", icon: IconInbox },
