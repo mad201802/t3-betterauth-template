@@ -190,20 +190,19 @@ export default function AuthPage() {
               </div>
             </div>
 
-            {/* Passkey Auth Button */}
-            <Button
-              type="button"
-              variant="outline"
-              onClick={handlePasskeyAuth}
-              disabled={isLoading !== null}
-              className="w-full"
-            >
-              <KeyRound className="h-5 w-5" />
-              {isLoading === "passkey" ? "Authenticating..." : "Passkey"}
-            </Button>
+            {/* Auth Buttons */}
+            <div className="grid gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handlePasskeyAuth}
+                disabled={isLoading !== null}
+                className="w-full"
+              >
+                <KeyRound className="h-5 w-5" />
+                {isLoading === "passkey" ? "Authenticating..." : "Passkey"}
+              </Button>
 
-            {/* Social Auth Buttons */}
-            <div className="grid gap-3">
               <Button
                 type="button"
                 variant="outline"

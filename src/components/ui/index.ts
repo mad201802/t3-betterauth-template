@@ -131,3 +131,9 @@ export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsib
 
 // OTP
 export { InputOTP, InputOTPGroup, InputOTPSeparator, InputOTPSlot } from "./input-otp";
+
+// Popover
+export { Popover, PopoverAnchor, PopoverContent, PopoverTrigger } from "./popover";
+
+// Calendar
+export { Calendar } from "./calendar";

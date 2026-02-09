@@ -28,6 +28,8 @@ model User {
   accounts      Account[]
 
   passkeys Passkey[]
+  tasks    Task[]
+  tags     Tag[]
 
   @@unique([email])
   @@map("user")
@@ -97,4 +99,39 @@ model Passkey {
   @@index([userId])
   @@index([credentialID])
   @@map("passkey")
+}
+
+// ===== To Do List Models =====
+
+model Task {
+  id        String    @id
+  title     String
+  body      String
+  priority  Int // 0 | 1 | 2 | 3
+  dueDate   DateTime?
+  completed Boolean   @default(false)
+  createdAt DateTime  @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tags Tag[]
+
+  @@index([userId])
+  @@index([completed])
+  @@map("task")
+}
+
+model Tag {
+  id    String @id
+  name  String
+  color String
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tasks Task[]
+
+  @@index([userId])
+  @@map("tag")
 }

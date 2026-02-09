@@ -5,6 +5,7 @@ import { auth } from "@/server/better-auth";
 import { headers } from "next/headers";
 import React from "react";
 import RedirectToSignIn from "@/components/redirect-to-signin";
+import { Toaster } from "@/components/ui";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,6 +33,7 @@ export default async function DashboardLayout(props: DashboardLayoutProps) {
         <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
             {props.children}
+            <Toaster />
           </div>
         </div>
       </SidebarInset>
