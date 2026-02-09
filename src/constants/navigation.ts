@@ -16,7 +16,6 @@ import {
   IconSalad,
   IconBarbell,
   IconBrain,
-  IconMoodEdit,
   IconNotebook,
   IconPlant2,
   IconMoneybag,

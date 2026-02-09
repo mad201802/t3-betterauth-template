@@ -6,13 +6,11 @@ import type { ParsedTaskInput, TaskData, TaskInputDefaults } from "@/components/
 import { Button, Skeleton } from "@/components/ui";
 import { api } from "@/trpc/react";
 import {
-  IconChevronDown,
-  IconChevronRight,
   IconDots,
   IconFilter,
   IconSortDescending,
 } from "@tabler/icons-react";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { toast } from "sonner";
 
 interface TasksPanelProps {
@@ -47,38 +45,39 @@ function TaskItemSkeleton() {
 }
 
 export default function TasksPanel(props: TasksPanelProps) {
+  const { selectedTask, onSelectTask, activeList } = props;
   const utils = api.useUtils();
-  const tasksQuery = api.todo.getTasks.useQuery({ filter: props.activeList });
-  const tagsQuery = api.todo.getTags.useQuery();
+  const tasksQuery = api.todo.getTasks.useQuery({ filter: activeList });
+  api.todo.getTags.useQuery();
 
   // Sync selectedTask with query data to reflect updates (e.g., toggle complete)
   useEffect(() => {
-    if (props.selectedTask && tasksQuery.data) {
-      const updatedTask = tasksQuery.data.find(t => t.id === props.selectedTask?.id);
-      if (updatedTask && updatedTask !== props.selectedTask) {
-        props.onSelectTask(updatedTask);
+    if (selectedTask && tasksQuery.data) {
+      const updatedTask = tasksQuery.data.find(t => t.id === selectedTask?.id);
+      if (updatedTask && updatedTask !== selectedTask) {
+        onSelectTask(updatedTask);
       }
     }
-  }, [tasksQuery.data, props.selectedTask, props.onSelectTask]);
+  }, [tasksQuery.data, selectedTask, onSelectTask]);
 
   // Compute defaults for TaskInput based on active list
   const taskInputDefaults = useMemo<TaskInputDefaults>(() => {
-    if (props.activeList === "today") {
+    if (activeList === "today") {
       return { dueDate: new Date() };
     }
-    if (props.activeList.startsWith("tag:")) {
-      const tagId = props.activeList.slice(4);
+    if (activeList.startsWith("tag:")) {
+      const tagId = activeList.slice(4);
       return { tagIds: [tagId] };
     }
-    if (props.activeList.startsWith("priority:")) {
-      const priorityValue = parseInt(props.activeList.slice(9), 10);
+    if (activeList.startsWith("priority:")) {
+      const priorityValue = parseInt(activeList.slice(9), 10);
       if (!isNaN(priorityValue) && priorityValue >= 0 && priorityValue <= 3) {
         return { priority: priorityValue as 0 | 1 | 2 | 3 };
       }
     }
     // week and inbox: no defaults
     return {};
-  }, [props.activeList]);
+  }, [activeList]);
 
   const createTaskMutation = api.todo.createTask.useMutation({
     onMutate: async (newTask) => {
@@ -86,7 +85,7 @@ export default function TasksPanel(props: TasksPanelProps) {
       await utils.todo.getTasks.cancel();
 
       // Snapshot the previous value
-      const previousTasks = utils.todo.getTasks.getData({ filter: props.activeList });
+      const previousTasks = utils.todo.getTasks.getData({ filter: activeList });
 
       // Get available tags from cache to build optimistic tag data
       const cachedTags = utils.todo.getTags.getData() ?? [];
@@ -95,7 +94,7 @@ export default function TasksPanel(props: TasksPanelProps) {
         .filter((tag): tag is NonNullable<typeof tag> => tag !== undefined);
 
       // Optimistically add the new task
-      utils.todo.getTasks.setData({ filter: props.activeList }, (old) => {
+      utils.todo.getTasks.setData({ filter: activeList }, (old) => {
         if (!old) return old;
         const optimisticTask: TaskData = {
           id: `temp-${Date.now()}`,
@@ -116,16 +115,16 @@ export default function TasksPanel(props: TasksPanelProps) {
     onError: (_err, _newTask, context) => {
       // Rollback on error
       if (context?.previousTasks) {
-        utils.todo.getTasks.setData({ filter: props.activeList }, context.previousTasks);
+        utils.todo.getTasks.setData({ filter: activeList }, context.previousTasks);
       }
 
       toast.error(`Failed to create task: ${_err.message}`);
     },
     onSettled: () => {
       // Always refetch to sync with server
-      utils.todo.getTasks.invalidate();
-      utils.todo.getSmartListCounts.invalidate();
-      utils.todo.getTags.invalidate();
+      void utils.todo.getTasks.invalidate();
+      void utils.todo.getSmartListCounts.invalidate();
+      void utils.todo.getTags.invalidate();
     },
 
     onSuccess: () => {
@@ -139,10 +138,10 @@ export default function TasksPanel(props: TasksPanelProps) {
       await utils.todo.getTasks.cancel();
 
       // Snapshot the previous value
-      const previousTasks = utils.todo.getTasks.getData({ filter: props.activeList });
+      const previousTasks = utils.todo.getTasks.getData({ filter: activeList });
 
       // Optimistically toggle the task
-      utils.todo.getTasks.setData({ filter: props.activeList }, (old) => {
+      utils.todo.getTasks.setData({ filter: activeList }, (old) => {
         if (!old) return old;
         return old.map((task) =>
           task.id === id ? { ...task, completed: !task.completed } : task
@@ -154,13 +153,13 @@ export default function TasksPanel(props: TasksPanelProps) {
     onError: (_err, _variables, context) => {
       // Rollback on error
       if (context?.previousTasks) {
-        utils.todo.getTasks.setData({ filter: props.activeList }, context.previousTasks);
+        utils.todo.getTasks.setData({ filter: activeList }, context.previousTasks);
       }
     },
     onSettled: () => {
       // Always refetch to sync with server
-      utils.todo.getTasks.invalidate();
-      utils.todo.getSmartListCounts.invalidate();
+      void utils.todo.getTasks.invalidate();
+      void utils.todo.getSmartListCounts.invalidate();
     },
   });
 
@@ -184,7 +183,7 @@ export default function TasksPanel(props: TasksPanelProps) {
         {/* Header */}
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-bold">{formatPanelHeader(props.activeList)}</h2>
+            <h2 className="text-2xl font-bold">{formatPanelHeader(activeList)}</h2>
             <div className="flex items-center gap-1">
               <Button variant="ghost" size="icon" className="h-8 w-8">
                 <IconFilter className="h-4 w-4" />
@@ -213,7 +212,7 @@ export default function TasksPanel(props: TasksPanelProps) {
               ))}
             </div>
           ) : (
-            TaskSection("Tasks", "Tasks", tasksQuery.data ?? [], props.selectedTask, props.onSelectTask, handleToggleComplete)
+            TaskSection("Tasks", "Tasks", tasksQuery.data ?? [], selectedTask, onSelectTask, handleToggleComplete)
           )}
         </div>
       </div>

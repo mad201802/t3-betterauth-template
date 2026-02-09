@@ -235,7 +235,7 @@ export function useTaskInput(
 
             // Remove the trigger and any partial text typed after it
             const beforeTrigger = value.slice(0, triggerPosition);
-            const afterTriggerMatch = value.slice(triggerPosition).match(/^[!#]\S*\s?/);
+            const afterTriggerMatch = /^[!#]\S*\s?/.exec(value.slice(triggerPosition));
             const afterTrigger = afterTriggerMatch
                 ? value.slice(triggerPosition + afterTriggerMatch[0].length)
                 : value.slice(triggerPosition + 1);

@@ -12,7 +12,6 @@ import { authClient } from "@/server/better-auth/client";
 import {
   IconBrandGithub,
   IconBrandGoogleFilled,
-  IconMailFilled,
   IconTrash,
   type IconProps,
 } from "@tabler/icons-react";

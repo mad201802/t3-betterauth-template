@@ -30,9 +30,9 @@ export default function TaskDetailPanel(props: TaskDetailPanelProps) {
       toast.error(`Failed to update task: ${err.message}`);
     },
     onSettled: () => {
-      utils.todo.getTasks.invalidate();
-      utils.todo.getSmartListCounts.invalidate();
-      utils.todo.getTags.invalidate();
+      void utils.todo.getTasks.invalidate();
+      void utils.todo.getSmartListCounts.invalidate();
+      void utils.todo.getTags.invalidate();
     },
   });
 
@@ -57,9 +57,9 @@ export default function TaskDetailPanel(props: TaskDetailPanelProps) {
       props.onClearTask();
     },
     onSettled: () => {
-      utils.todo.getTasks.invalidate();
-      utils.todo.getSmartListCounts.invalidate();
-      utils.todo.getTags.invalidate();
+      void utils.todo.getTasks.invalidate();
+      void utils.todo.getSmartListCounts.invalidate();
+      void utils.todo.getTags.invalidate();
     },
   });
 
@@ -73,7 +73,7 @@ export default function TaskDetailPanel(props: TaskDetailPanelProps) {
           tagIds: newTags.map((t) => t.id),
         });
       }
-      utils.todo.getTags.invalidate();
+      void utils.todo.getTags.invalidate();
     },
     onError: (err) => {
       toast.error(`Failed to create tag: ${err.message}`);

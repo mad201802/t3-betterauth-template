@@ -84,7 +84,7 @@ export function TaskDetail({
       setTagInput("");
       setShowTagPopover(false);
     },
-    [task.id, task.tags, onUpdateTask]
+    [task, onUpdateTask]
   );
 
   const handleCreateTag = useCallback(() => {
@@ -180,7 +180,7 @@ export function TaskDetail({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {(Object.entries(PRIORITY_CONFIG) as [string, typeof PRIORITY_CONFIG[Priority]][]).map(
+                {Object.entries(PRIORITY_CONFIG).map(
                   ([value, config]) => (
                     <SelectItem key={value} value={value}>
                       <span className={cn("flex items-center gap-2", config.color)}>
@@ -335,7 +335,7 @@ export function TaskDetail({
                           onClick={handleCreateTag}
                         >
                           <IconPlus className="h-4 w-4" />
-                          Create "{tagInput.trim()}"
+                          Create &ldquo;{tagInput.trim()}&rdquo;
                         </button>
                       )}
                     {filteredTags.length === 0 && !tagInput.trim() && (
