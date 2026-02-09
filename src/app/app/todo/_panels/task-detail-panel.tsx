@@ -121,6 +121,46 @@ export default function TaskDetailPanel(props: TaskDetailPanelProps) {
     [createTagMutation]
   );
 
+  // Create subtask mutation
+  const createSubtaskMutation = api.todo.createTask.useMutation({
+    onSuccess: () => {
+      void utils.todo.getTasks.invalidate();
+    },
+    onError: (err) => {
+      toast.error(`Failed to create subtask: ${err.message}`);
+    },
+  });
+
+  // Toggle subtask completion
+  const toggleSubtaskMutation = api.todo.toggleTaskComplete.useMutation({
+    onSuccess: () => {
+      void utils.todo.getTasks.invalidate();
+    },
+    onError: (err) => {
+      toast.error(`Failed to toggle subtask: ${err.message}`);
+    },
+  });
+
+  const handleAddSubtask = useCallback(
+    (parentId: string, title: string) => {
+      createSubtaskMutation.mutate({
+        parentId,
+        title,
+        body: "",
+        priority: 0,
+        dueDate: null,
+      });
+    },
+    [createSubtaskMutation]
+  );
+
+  const handleToggleSubtask = useCallback(
+    (taskId: string) => {
+      toggleSubtaskMutation.mutate({ id: taskId });
+    },
+    [toggleSubtaskMutation]
+  );
+
   // Convert tags query data to the format expected by TaskDetail
   const availableTags = tagsQuery.data?.map((tag) => ({
     id: tag.id,
@@ -138,6 +178,8 @@ export default function TaskDetailPanel(props: TaskDetailPanelProps) {
           onDeleteTask={handleDeleteTask}
           onClose={props.onClearTask}
           onCreateTag={handleCreateTag}
+          onAddSubtask={handleAddSubtask}
+          onToggleSubtask={handleToggleSubtask}
         />
       ) : (
         <div className="flex h-full flex-col overflow-y-auto p-6">

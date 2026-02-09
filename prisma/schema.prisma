@@ -115,10 +115,15 @@ model Task {
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  parentId String?
+  parent   Task?   @relation("Subtasks", fields: [parentId], references: [id], onDelete: Cascade)
+  children Task[]  @relation("Subtasks")
+
   tags Tag[]
 
   @@index([userId])
   @@index([completed])
+  @@index([parentId])
   @@map("task")
 }
 

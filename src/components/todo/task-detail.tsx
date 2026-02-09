@@ -26,10 +26,12 @@ import {
   IconTrash,
   IconX,
   IconPlus,
+  IconSubtask,
 } from "@tabler/icons-react";
 import { cn } from "@/lib/utils";
-import { type TaskData, type Priority, PRIORITY_CONFIG, type TagData } from "./types";
+import { type TaskData, type Priority, PRIORITY_CONFIG, type TagData, hasChildren, getSubtaskStats } from "./types";
 import { MarkdownEditor } from "./markdown-editor";
+import { ProgressPie } from "./progress-pie";
 
 // Priority border classes for the checkbox (Tailwind can't interpolate dynamic classes)
 const PRIORITY_BORDER_CLASSES: Record<Priority, string> = {
@@ -46,6 +48,10 @@ interface TaskDetailProps {
   onDeleteTask: (taskId: string) => void;
   onClose: () => void;
   onCreateTag?: (name: string) => void;
+  /** Add a subtask to this task */
+  onAddSubtask?: (parentId: string, title: string) => void;
+  /** Toggle completion of a subtask */
+  onToggleSubtask?: (taskId: string) => void;
 }
 
 export function TaskDetail({
@@ -55,9 +61,15 @@ export function TaskDetail({
   onDeleteTask,
   onClose,
   onCreateTag,
+  onAddSubtask,
+  onToggleSubtask,
 }: TaskDetailProps) {
   const [tagInput, setTagInput] = useState("");
   const [showTagPopover, setShowTagPopover] = useState(false);
+  const [subtaskInput, setSubtaskInput] = useState("");
+
+  const isParent = hasChildren(task);
+  const stats = useMemo(() => (isParent ? getSubtaskStats(task) : null), [task, isParent]);
 
   // Filter available tags to exclude already assigned ones
   const unassignedTags = useMemo(() => {
@@ -312,6 +324,86 @@ export function TaskDetail({
               </Popover>
             </div>
           </div>
+        </div>
+
+        <Separator />
+
+        {/* Subtasks Section */}
+        <div className="space-y-2">
+          <div className="flex items-center gap-2">
+            <IconSubtask className="h-4 w-4 text-muted-foreground" />
+            <h4 className="text-xs font-medium text-muted-foreground uppercase">
+              Subtasks
+            </h4>
+            {stats && (
+              <span className="text-xs text-muted-foreground">
+                {stats.completed}/{stats.total}
+              </span>
+            )}
+          </div>
+
+          {/* Existing subtasks */}
+          {task.children && task.children.length > 0 && (
+            <div className="space-y-1 pl-6">
+              {task.children.map((child) => {
+                const childHasChildren = child.children && child.children.length > 0;
+                const childStats = childHasChildren ? getSubtaskStats(child) : null;
+                const isAutoCompleted = childStats && childStats.total > 0 && childStats.completed === childStats.total;
+
+                return (
+                  <div
+                    key={child.id}
+                    className="flex items-center gap-2 py-1"
+                  >
+                    {childHasChildren && childStats ? (
+                      <ProgressPie completed={childStats.completed} total={childStats.total} size={16} />
+                    ) : (
+                      <Checkbox
+                        checked={child.completed}
+                        onClick={() => onToggleSubtask?.(child.id)}
+                        className="h-4 w-4"
+                      />
+                    )}
+                    <span
+                      className={cn(
+                        "text-sm flex-1",
+                        (child.completed || isAutoCompleted) && "line-through text-muted-foreground"
+                      )}
+                    >
+                      {child.title}
+                    </span>
+                    {childHasChildren && childStats && (
+                      <span className="text-xs text-muted-foreground">
+                        {childStats.completed}/{childStats.total}
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+
+          {/* Add subtask input */}
+          {onAddSubtask && (
+            <div className="flex items-center gap-2 pl-6">
+              <IconPlus className="h-4 w-4 text-muted-foreground" />
+              <Input
+                value={subtaskInput}
+                onChange={(e) => setSubtaskInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && subtaskInput.trim()) {
+                    onAddSubtask(task.id, subtaskInput.trim());
+                    setSubtaskInput("");
+                  }
+                  if (e.key === "Escape") {
+                    setSubtaskInput("");
+                  }
+                }}
+                placeholder="Add a subtask..."
+                className="h-7 text-sm flex-1"
+              />
+            </div>
+          )}
         </div>
 
         <Separator />

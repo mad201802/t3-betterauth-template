@@ -109,6 +109,8 @@ export default function TasksPanel(props: TasksPanelProps) {
           completed: false,
           createdAt: new Date(),
           userId: "",
+          parentId: null,
+          children: [],
           tags: optimisticTags
         };
         return [optimisticTask, ...old];

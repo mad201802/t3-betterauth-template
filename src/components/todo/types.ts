@@ -86,3 +86,39 @@ export const TAG_COLORS = [
 export function generateRandomTagColor(): string {
   return TAG_COLORS[Math.floor(Math.random() * TAG_COLORS.length)]!;
 }
+
+// ============================================================================
+// Subtask Utilities
+// ============================================================================
+
+/** Stats for a task's children (used for progress pie chart) */
+export interface SubtaskStats {
+  total: number;
+  completed: number;
+}
+
+/** Check if a task has children (is a parent task) */
+export function hasChildren(task: TaskData): boolean {
+  return (task.children?.length ?? 0) > 0;
+}
+
+/**
+ * Recursively count all descendants and how many are completed.
+ * Used for the progress pie chart on parent tasks.
+ */
+export function getSubtaskStats(task: TaskData): SubtaskStats {
+  let total = 0;
+  let completed = 0;
+
+  function countChildren(children: TaskData["children"]) {
+    if (!children) return;
+    for (const child of children) {
+      total++;
+      if (child.completed) completed++;
+      countChildren(child.children);
+    }
+  }
+
+  countChildren(task.children);
+  return { total, completed };
+}

@@ -11,7 +11,10 @@ export {
     type TagData,
     type AutocompleteMode,
     type AutocompleteOption,
+    type SubtaskStats,
     PRIORITY_CONFIG,
     TAG_COLORS,
     generateRandomTagColor,
+    hasChildren,
+    getSubtaskStats,
 } from "./types";

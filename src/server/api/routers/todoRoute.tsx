@@ -14,6 +14,7 @@ const taskCreateSchema = z.object({
     priority: z.number().int().min(0).max(3),
     dueDate: z.date().nullable().optional(),
     tagIds: z.array(z.string()).optional(),
+    parentId: z.string().optional(),
 });
 
 const taskUpdateSchema = z.object({
@@ -44,6 +45,19 @@ export const todoRouter = createTRPCRouter({
     createTask: protectedProcedure
         .input(taskCreateSchema)
         .mutation(async ({ ctx, input }) => {
+            // If parentId is provided, verify ownership
+            if (input.parentId) {
+                const parentTask = await ctx.db.task.findFirst({
+                    where: { id: input.parentId, userId: ctx.session.user.id },
+                });
+                if (!parentTask) {
+                    throw new TRPCError({
+                        code: "NOT_FOUND",
+                        message: "Parent task not found",
+                    });
+                }
+            }
+
             const task = await ctx.db.task.create({
                 data: {
                     id: crypto.randomUUID(),
@@ -52,11 +66,12 @@ export const todoRouter = createTRPCRouter({
                     priority: input.priority,
                     dueDate: input.dueDate ?? null,
                     userId: ctx.session.user.id,
+                    parentId: input.parentId ?? null,
                     tags: input.tagIds ? {
                         connect: input.tagIds.map(id => ({ id })),
                     } : undefined,
                 },
-                include: { tags: true },
+                include: { tags: true, children: { include: { tags: true } } },
             });
             return task;
         }),
@@ -124,13 +139,27 @@ export const todoRouter = createTRPCRouter({
             const tasks = await ctx.db.task.findMany({
                 where: {
                     userId,
+                    parentId: null, // Only fetch root-level tasks
                     ...(input?.completed !== undefined && { completed: input.completed }),
                     ...(input?.priority !== undefined && { priority: input.priority }),
                     ...dateFilter,
                     ...tagFilter,
                     ...priorityFilter,
                 },
-                include: { tags: true },
+                include: {
+                    tags: true,
+                    children: {
+                        include: {
+                            tags: true,
+                            children: {
+                                include: {
+                                    tags: true,
+                                    children: { include: { tags: true, children: true } },
+                                },
+                            },
+                        },
+                    },
+                },
                 orderBy: [
                     { createdAt: 'desc' },
                 ],
@@ -147,7 +176,20 @@ export const todoRouter = createTRPCRouter({
                     id: input.id,
                     userId: ctx.session.user.id,
                 },
-                include: { tags: true },
+                include: {
+                    tags: true,
+                    children: {
+                        include: {
+                            tags: true,
+                            children: {
+                                include: {
+                                    tags: true,
+                                    children: { include: { tags: true, children: true } },
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             if (!task) {
@@ -186,7 +228,20 @@ export const todoRouter = createTRPCRouter({
                         tags: { set: tagIds.map(tagId => ({ id: tagId })) },
                     }),
                 },
-                include: { tags: true },
+                include: {
+                    tags: true,
+                    children: {
+                        include: {
+                            tags: true,
+                            children: {
+                                include: {
+                                    tags: true,
+                                    children: { include: { tags: true, children: true } },
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             return task;
@@ -233,7 +288,20 @@ export const todoRouter = createTRPCRouter({
             const task = await ctx.db.task.update({
                 where: { id: input.id },
                 data: { completed: !existing.completed },
-                include: { tags: true },
+                include: {
+                    tags: true,
+                    children: {
+                        include: {
+                            tags: true,
+                            children: {
+                                include: {
+                                    tags: true,
+                                    children: { include: { tags: true, children: true } },
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
             return task;
