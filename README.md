@@ -110,7 +110,7 @@ APP_CONFIG.naming.applicationName
 APP_CONFIG.routes.auth
 
 // Access auth settings
-APP_CONFIG.auth.passwordMinLength
+APP_CONFIG.auth.emailMinLength
 ```
 
 ### Environment Variables

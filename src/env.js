@@ -12,6 +12,8 @@ export const env = createEnv({
       .enum(["development", "test", "production"])
       .default("development"),
     BETTER_AUTH_SECRET: z.string(),
+    // Base URL of your application (e.g., "http://localhost:3000" for development or "https://yourdomain.com" for production)
+    // Required for passkey authentication callbacks
     BETTER_AUTH_URL: z.string(),
     DATABASE_URL: z.url(),
 

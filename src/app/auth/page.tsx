@@ -44,10 +44,7 @@ export default function AuthPage() {
   useEffect(() => {
     // Check if browser supports conditional UI
     if (!PublicKeyCredential?.isConditionalMediationAvailable) {
-      console.log("Conditional mediation not supported");
       return;
-    } else {
-      console.log("Conditional mediation supported");
     }
 
     // Check if conditional mediation is available
@@ -56,8 +53,6 @@ export default function AuthPage() {
         if (available) {
           // Preload passkeys with autoFill for conditional UI
           void authClient.signIn.passkey({ autoFill: true });
-        } else {
-          console.log("Conditional mediation not available");
         }
       },
     );
@@ -103,7 +98,7 @@ export default function AuthPage() {
     setResponseMessage(null);
     setIsLoading("passkey");
     try {
-      const response = await authClient.signIn.passkey({
+      await authClient.signIn.passkey({
         autoFill: false,
         fetchOptions: {
           onSuccess(_context) {
@@ -113,12 +108,15 @@ export default function AuthPage() {
           },
           onError(context) {
             // Handle authentication errors
-            console.error("Authentication failed:", context.error.message);
+            console.error("Authentication failed:", context.error?.message);
+            setResponseMessage({
+              type: "error",
+              message: context.error?.message ?? "Failed to sign in with passkey",
+            });
+            setIsLoading(null);
           },
         },
       });
-
-      console.log(response);
 
       // Successful authentication will redirect automatically
     } catch (err) {
