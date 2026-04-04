@@ -19,10 +19,10 @@ interface PricingPlansClientProps {
   redirectPattern?: string;
 }
 
-export function PricingPlansClient({ 
-  products, 
+export function PricingPlansClient({
+  products,
   buttonText = "Get Started",
-  redirectPattern 
+  redirectPattern
 }: PricingPlansClientProps) {
   const [selectedPeriod, setSelectedPeriod] = useState<PricingPeriod>("month");
 
@@ -37,13 +37,13 @@ export function PricingPlansClient({
     <div className="w-full max-w-7xl mx-auto px-4 py-6">
       {/* Header Section */}
       <div className="text-center mb-15 space-y-4 relative z-20">
-        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+        <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-pink-600 bg-clip-text text-transparent">
           Choose Your Perfect Plan
         </h1>
         <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
           Scale your business with the right plan. All plans include a 14-day free trial.
         </p>
-        
+
         {/* Period Toggle */}
         <PeriodSelector onPeriodChange={setSelectedPeriod} products={products} />
       </div>
@@ -59,13 +59,13 @@ export function PricingPlansClient({
               key={product.productId}
               className={cn(
                 "relative flex flex-col transition-all duration-300 hover:shadow-2xl hover:-translate-y-1",
-                isFeatured && "border-purple-500 border-2 shadow-xl md:scale-105"
+                isFeatured && "border-primary border-2 shadow-xl md:scale-105"
               )}
             >
               {/* Featured Badge */}
               {isFeatured && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
-                  <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white px-4 py-1 shadow-lg">
+                  <Badge className="bg-gradient-to-r from-primary to-pink-600 text-primary-foreground px-4 py-1 shadow-lg border-0">
                     <Sparkles className="w-3 h-3 mr-1" />
                     Most Popular
                   </Badge>
@@ -112,8 +112,8 @@ export function PricingPlansClient({
                   <ul className="space-y-3">
                     {product.whatYouGet.map((feature, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <div className="mt-0.5 rounded-full bg-green-100 dark:bg-green-900/30 p-1">
-                          <Check className="w-3 h-3 text-green-600 dark:text-green-400" />
+                        <div className="mt-0.5 rounded-full bg-primary/10 p-1">
+                          <Check className="w-3 h-3 text-primary" />
                         </div>
                         <span className="text-sm flex-1">{feature}</span>
                       </li>
@@ -132,8 +132,8 @@ export function PricingPlansClient({
                       <ul className="space-y-3">
                         {product.whatYouDontGet.map((feature, idx) => (
                           <li key={idx} className="flex items-start gap-3">
-                            <div className="mt-0.5 rounded-full bg-red-100 dark:bg-red-900/30 p-1">
-                              <X className="w-3 h-3 text-red-600 dark:text-red-400" />
+                            <div className="mt-0.5 rounded-full bg-destructive/10 p-1">
+                              <X className="w-3 h-3 text-destructive" />
                             </div>
                             <span className="text-sm flex-1 text-muted-foreground">
                               {feature}
@@ -152,7 +152,7 @@ export function PricingPlansClient({
                   className={cn(
                     "w-full h-12 font-semibold transition-all duration-300",
                     isFeatured
-                      ? "bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl"
+                      ? "bg-gradient-to-r from-primary to-pink-600 hover:from-primary/90 hover:to-pink-700 text-primary-foreground shadow-lg hover:shadow-xl"
                       : "hover:scale-105"
                   )}
                   variant={isFeatured ? "default" : "outline"}
@@ -170,7 +170,7 @@ export function PricingPlansClient({
       {/* Footer Note */}
       <div className="text-center mt-12 text-sm text-muted-foreground">
         <p>All plans include a 14-day free trial. No credit card required.</p>
-        <p className="mt-1">Need a custom solution? <Link href="/contact" className="text-purple-600 hover:underline font-medium">Contact us</Link></p>
+        <p className="mt-1">Need a custom solution? <Link href="/contact" className="text-primary hover:underline font-medium">Contact us</Link></p>
       </div>
     </div>
   );

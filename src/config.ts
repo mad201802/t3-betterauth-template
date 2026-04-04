@@ -7,8 +7,7 @@
  */
 
 import {
-  getResetPasswordEmailTemplate,
-  getEmailVerificationTemplate,
+  getMagicLinkEmailTemplate,
 } from "@/lib/email-templates";
 
 /**
@@ -43,16 +42,8 @@ type AppConfig = {
   readonly routes: {
     /** Public home page */
     readonly home: string;
-    /** Sign in page */
-    readonly signIn: string;
-    /** Sign up page */
-    readonly signUp: string;
-    /** Password recovery page */
-    readonly recovery: string;
-    /** Reset password page (from email link) */
-    readonly resetPassword: string;
-    /** 2FA verification page */
-    readonly verify2FA: string;
+    /** Auth page */
+    readonly auth: string;
     /** Main dashboard */
     readonly dashboard: string;
     /** Account settings page */
@@ -61,16 +52,10 @@ type AppConfig = {
   readonly auth: {
     /** Where to redirect after successful authentication */
     readonly defaultRedirectAfterAuth: string;
-    /** Minimum password length */
-    readonly passwordMinLength: number;
     /** Minimum email length */
     readonly emailMinLength: number;
     /** Maximum email length (RFC 5321) */
     readonly emailMaxLength: number;
-  };
-  readonly ui: {
-    /** QR code size in pixels for 2FA setup */
-    readonly qrCodeSize: number;
   };
   readonly links: {
     /** Terms of service URL */
@@ -81,13 +66,8 @@ type AppConfig = {
   readonly email: {
     /** Email sender address */
     readonly fromAddress: string;
-    /** Generate password reset email body */
-    readonly getResetPasswordEmailBody: (params: {
-      user: string;
-      url: string;
-    }) => string;
-    /** Generate email verification email body */
-    readonly getVerificationEmailBody: (params: {
+    /** Generate magic link email body */
+    readonly getMagicLinkEmailBody: (params: {
       user: string;
       url: string;
     }) => string;
@@ -187,11 +167,7 @@ export const APP_CONFIG = {
     home: "/",
 
     // Auth routes
-    signIn: "/auth/sign-in",
-    signUp: "/auth/sign-up",
-    recovery: "/auth/recovery",
-    resetPassword: "/auth/reset-password",
-    verify2FA: "/auth/verify-2fa",
+    auth: "/auth",
 
     // Protected routes
     dashboard: "/dashboard",
@@ -200,13 +176,8 @@ export const APP_CONFIG = {
 
   auth: {
     defaultRedirectAfterAuth: "/dashboard",
-    passwordMinLength: 8,
     emailMinLength: 5,
     emailMaxLength: 254,
-  },
-
-  ui: {
-    qrCodeSize: 200,
   },
 
   links: {
@@ -216,8 +187,7 @@ export const APP_CONFIG = {
 
   email: {
     fromAddress: "Acme <onboarding@resend.dev>",
-    getResetPasswordEmailBody: getResetPasswordEmailTemplate,
-    getVerificationEmailBody: getEmailVerificationTemplate,
+    getMagicLinkEmailBody: getMagicLinkEmailTemplate,
   },
 
   seo: {
@@ -230,7 +200,7 @@ export const APP_CONFIG = {
 
     // Meta description (keep between 150-160 characters for best results)
     description:
-      "Build secure, scalable SaaS applications with BetterAuth Template. Features include 2FA, OAuth, email verification, and a beautiful dashboard.",
+      "Build secure, scalable SaaS applications with BetterAuth Template. Features include OAuth, email verification, and a beautiful dashboard.",
 
     // Keywords for search engines (focus on 5-10 relevant terms)
     keywords: [
@@ -239,7 +209,6 @@ export const APP_CONFIG = {
       "Next.js",
       "TypeScript",
       "BetterAuth",
-      "2FA",
       "OAuth",
       "dashboard",
       "starter kit",

@@ -9,8 +9,7 @@ export default function RedirectToSignIn() {
   const router = useRouter();
 
   useEffect(() => {
-    const signInRoute = APP_CONFIG?.routes?.signIn ?? "/auth/sign-in";
-    router.push(`${signInRoute}?redirect=` + encodeURIComponent(pathname));
+    router.push(`${APP_CONFIG.routes.auth}?redirect=` + encodeURIComponent(pathname));
   }, [pathname, router]);
 
   return null;

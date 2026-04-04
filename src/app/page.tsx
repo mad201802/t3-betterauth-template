@@ -14,12 +14,12 @@ export default async function Home() {
     <HydrateClient>
       <main className="flex min-h-screen flex-col">
         {/* Hero Section */}
-        <section className="relative flex flex-col items-center justify-center px-4 py-24 md:py-32 bg-linear-to-b from-purple-500/10 via-pink-500/5 to-background">
+        <section className="relative flex flex-col items-center justify-center px-4 py-24 md:py-32 bg-linear-to-b from-primary/10 via-pink-500/5 to-background">
           <div className="absolute inset-0 bg-grid-white/5 bg-size-[50px_50px] mask-[radial-gradient(ellipse_at_center,transparent_20%,black)]" />
-          
+
           <div className="relative z-10 container flex flex-col items-center justify-center gap-8 text-center max-w-5xl">
             {/* Badge */}
-            <div className="inline-flex items-center gap-2 rounded-full border border-purple-500/20 bg-purple-500/10 px-4 py-2 text-sm text-purple-600 dark:text-purple-400 backdrop-blur-sm">
+            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-4 py-2 text-sm text-primary backdrop-blur-sm">
               <Sparkles className="w-4 h-4" />
               Powered by Next.js, tRPC & BetterAuth
             </div>
@@ -27,14 +27,14 @@ export default async function Home() {
             {/* Main Heading */}
             <h1 className="text-5xl font-extrabold tracking-tight sm:text-6xl md:text-7xl">
               Build Your SaaS in{" "}
-              <span className="bg-linear-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-linear-to-r from-primary to-pink-600 bg-clip-text text-transparent">
                 Record Time
               </span>
             </h1>
 
             {/* Subheading */}
             <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl leading-relaxed">
-              The complete authentication template for modern web applications. 
+              The complete authentication template for modern web applications.
               Ship faster with pre-built auth, payments, and beautiful UI components.
             </p>
 
@@ -42,21 +42,21 @@ export default async function Home() {
             <div className="flex flex-col sm:flex-row items-center gap-4 mt-4">
               {!session ? (
                 <>
-                  <Button asChild size="lg" className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all">
-                    <Link href={APP_CONFIG.routes.signUp}>
+                  <Button asChild size="lg" className="bg-linear-to-r from-primary to-pink-600 hover:from-primary/90 hover:to-pink-700 text-primary-foreground shadow-lg hover:shadow-xl transition-all">
+                    <Link href={APP_CONFIG.routes.auth}>
                       Get Started Free
                       <ArrowRight className="ml-2 w-4 h-4" />
                     </Link>
                   </Button>
                   <Button asChild size="lg" variant="outline">
-                    <Link href={APP_CONFIG.routes.signIn}>
+                    <Link href={APP_CONFIG.routes.auth}>
                       Sign In
                     </Link>
                   </Button>
                 </>
               ) : (
                 <>
-                  <Button asChild size="lg" className="bg-linear-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white shadow-lg hover:shadow-xl transition-all">
+                  <Button asChild size="lg" className="bg-linear-to-r from-primary to-pink-600 hover:from-primary/90 hover:to-pink-700 text-primary-foreground shadow-lg hover:shadow-xl transition-all">
                     <Link href={APP_CONFIG.routes.dashboard}>
                       Go to Dashboard
                       <ArrowRight className="ml-2 w-4 h-4" />
@@ -80,7 +80,7 @@ export default async function Home() {
                 Lightning Fast
               </div>
               <div className="flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-purple-600" />
+                <Sparkles className="w-4 h-4 text-primary" />
                 Beautiful UI
               </div>
             </div>
@@ -88,7 +88,7 @@ export default async function Home() {
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="bg-linear-to-b from-background via-purple-50/20 dark:via-purple-950/10 to-background">
+        <section id="pricing" className="bg-linear-to-b from-background via-primary/5 dark:via-primary/10 to-background">
           <PricingPlans />
         </section>
       </main>
